@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurar seu espaço — Trato</title>
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+
+<div class="auth">
+  <aside class="auth-aside">
+    <a class="aside-logo" href="../index.html" id="aside-logo">Trato</a>
+
+    <div>
+      <h2>Estes dados aparecem<br>nos seus documentos.</h2>
+      <p>Orçamentos e contratos são preenchidos com essas informações. Você pode alterar tudo depois nas configurações.</p>
+      <ul class="aside-steps" id="aside-nicho"></ul>
+    </div>
+
+    <div class="quote">
+      Um orçamento com sua identidade passa outra impressão para o cliente.
+      <span>E evita a conversa solta de mensagem.</span>
+    </div>
+  </aside>
+
+  <main class="auth-main">
+    <div class="auth-card wide">
+      <div class="stepper" id="stepper"></div>
+
+      <!-- ETAPA 3 — CONFIGURAÇÃO -->
+      <section id="etapa-3">
+        <h1>Configure seu espaço</h1>
+        <p class="sub">Leva menos de um minuto e deixa seus documentos prontos para enviar.</p>
+
+        <div class="card">
+          <form id="form-config" novalidate>
+            <div class="card-body">
+              <div class="field">
+                <label>Logo ou foto de perfil<span class="label-hint">Opcional. Aparece no topo dos seus orçamentos.</span></label>
+                <div class="logo-upload">
+                  <div class="logo-preview" id="logo-preview">TR</div>
+                  <div>
+                    <input type="file" id="logo" accept="image/*" class="hidden">
+                    <button class="btn btn-secondary btn-sm" type="button" id="btn-logo">Escolher imagem</button>
+                    <button class="btn btn-ghost btn-sm hidden" type="button" id="btn-logo-remover">Remover</button>
+                    <p class="tiny muted mb-0 mt-8">PNG ou JPG de até 1 MB.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="nomeProfissional">Nome profissional <span class="req">*</span></label>
+                  <input class="input" type="text" id="nomeProfissional" placeholder="Ex.: Caique Ribeiro Fotografia">
+                  <span class="field-error"></span>
+                </div>
+                <div class="field">
+                  <label for="cidade">Cidade <span class="req">*</span></label>
+                  <input class="input" type="text" id="cidade" placeholder="Ex.: São Paulo, SP">
+                  <span class="field-error"></span>
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="telefoneProfissional">Telefone profissional</label>
+                  <input class="input" type="tel" id="telefoneProfissional" placeholder="(11) 90000-0000">
+                  <span class="field-error"></span>
+                </div>
+                <div class="field">
+                  <label for="emailProfissional">E-mail profissional</label>
+                  <input class="input" type="email" id="emailProfissional" placeholder="contato@seunegocio.com.br">
+                  <span class="field-error"></span>
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="pix">Chave Pix</label>
+                  <input class="input" type="text" id="pix" placeholder="E-mail, telefone ou chave aleatória">
+                  <span class="field-error"></span>
+                </div>
+                <div class="field">
+                  <label for="formaPagamentoPadrao">Forma de pagamento padrão</label>
+                  <select class="select" id="formaPagamentoPadrao">
+                    <option>50% de entrada e 50% na entrega</option>
+                    <option>30% de entrada e 70% na entrega</option>
+                    <option>Pix à vista</option>
+                    <option>Pagamento na conclusão</option>
+                    <option>Parcelado no cartão</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="prazoPadrao">Prazo padrão de entrega</label>
+                <select class="select" id="prazoPadrao">
+                  <option>3 dias</option>
+                  <option>7 dias</option>
+                  <option>15 dias</option>
+                  <option>30 dias</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="card-foot row-between">
+              <button class="btn btn-ghost" type="button" id="btn-pular">Preencher depois</button>
+              <button class="btn btn-primary" type="submit">Concluir configuração</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ETAPA 4 — FINALIZAÇÃO -->
+      <section id="etapa-4" class="hidden">
+        <div class="card">
+          <div class="card-body done-box">
+            <div class="done-check">✓</div>
+            <h2>Seu espaço está pronto.</h2>
+            <p class="muted">Já deixamos alguns dados de exemplo para você navegar e testar o sistema.</p>
+
+            <ul class="done-list" id="resumo-config"></ul>
+
+            <button class="btn btn-primary btn-lg btn-block mt-16" type="button" id="btn-dashboard">Ir para o Dashboard</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/store.js"></script>
+<script src="../js/services.js"></script>
+<script src="../js/components.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/onboarding.js"></script>
+</body>
+</html>

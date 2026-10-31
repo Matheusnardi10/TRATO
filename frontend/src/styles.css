@@ -1,0 +1,9 @@
+/* Estilos globais da aplicação Angular.
+   As folhas de estilo originais do Trato (style.css, layout.css, components.css,
+   forms.css, tables.css, pages.css, landing.css, agenda.css, print.css) são
+   carregadas como "styles" globais em angular.json, exatamente como eram
+   carregadas via <link> nas páginas HTML originais — isso preserva 100% da
+   identidade visual (cores, tipografia, espaçamentos) sem reescrever nada. */
+
+html, body { height: 100%; }
+body { margin: 0; }

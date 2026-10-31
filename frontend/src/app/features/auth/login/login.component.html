@@ -1,0 +1,60 @@
+<div class="auth">
+  <aside class="auth-aside">
+    <a class="aside-logo">Trato</a>
+    <div>
+      <h2>Do orçamento ao lucro,<br>tudo em um só lugar.</h2>
+      <p>Entre para acompanhar seus serviços, contratos e o resultado real de cada trabalho.</p>
+      <ul class="aside-steps">
+        <li><span class="s-n">01</span><span>Orçamento com os campos do seu tipo de serviço</span></li>
+        <li><span class="s-n">02</span><span>Contrato gerado a partir do orçamento aprovado</span></li>
+        <li><span class="s-n">03</span><span>Agenda com valor e lucro estimado por dia</span></li>
+        <li><span class="s-n">04</span><span>Custos lançados e lucro calculado na hora</span></li>
+      </ul>
+    </div>
+    <div class="quote">
+      "Faturei bem no mês, mas não sei quanto sobrou."
+      <span>É exatamente essa pergunta que o Trato responde.</span>
+    </div>
+  </aside>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <h1>Entrar na sua conta</h1>
+      <p class="sub">Use seu e-mail e senha para acessar o painel.</p>
+
+      <div class="card card-padded">
+        <form [formGroup]="form" (ngSubmit)="entrar()" novalidate>
+          <div class="field">
+            <label for="email">E-mail <span class="req">*</span></label>
+            <input class="input" type="email" id="email" formControlName="email" placeholder="voce@email.com" autocomplete="email">
+            @if (form.get('email')?.invalid && form.get('email')?.touched) {
+              <span class="field-error">Informe um e-mail válido.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="senha">Senha <span class="req">*</span></label>
+            <input class="input" type="password" id="senha" formControlName="senha" placeholder="Sua senha" autocomplete="current-password">
+            @if (form.get('senha')?.invalid && form.get('senha')?.touched) {
+              <span class="field-error">Campo obrigatório.</span>
+            }
+          </div>
+
+          @if (erro) {
+            <div class="alert alert-danger mb-16"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+          }
+
+          <button class="btn btn-primary btn-block btn-lg" type="submit" [disabled]="enviando">
+            {{ enviando ? 'Entrando...' : 'Entrar' }}
+          </button>
+        </form>
+
+        <div class="demo-hint">
+          <strong>Conta de demonstração:</strong> <b>demo&#64;trato.app</b> · senha <b>123456</b>
+        </div>
+      </div>
+
+      <p class="auth-foot">Não possui conta? <a routerLink="/cadastro">Criar conta</a></p>
+    </div>
+  </main>
+</div>

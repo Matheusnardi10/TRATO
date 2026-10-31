@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar conta — Trato</title>
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+
+<div class="auth">
+  <aside class="auth-aside">
+    <a class="aside-logo" href="../index.html" id="aside-logo">Trato</a>
+
+    <div>
+      <h2>Seu espaço de trabalho<br>em quatro passos.</h2>
+      <p>Leva menos de dois minutos. Depois disso você já pode criar seu primeiro orçamento.</p>
+
+      <ul class="aside-steps">
+        <li><span class="s-n">01</span><span>Seus dados de acesso</span></li>
+        <li><span class="s-n">02</span><span>Seu tipo de serviço</span></li>
+        <li><span class="s-n">03</span><span>Dados que aparecem nos documentos</span></li>
+        <li><span class="s-n">04</span><span>Pronto para usar</span></li>
+      </ul>
+    </div>
+
+    <div class="quote">
+      Escolher o tipo de serviço define seus campos de orçamento e o modelo de contrato.
+      <span>Você pode trocar depois nas configurações.</span>
+    </div>
+  </aside>
+
+  <main class="auth-main">
+    <div class="auth-card wide">
+
+      <!-- Passos -->
+      <div class="stepper" id="stepper"></div>
+
+      <!-- ETAPA 1 — DADOS -->
+      <section id="etapa-1">
+        <h1>Criar sua conta</h1>
+        <p class="sub">Comece pelos seus dados de acesso.</p>
+
+        <div class="card card-padded">
+          <form id="form-dados" novalidate>
+            <div class="field-row">
+              <div class="field">
+                <label for="nome">Nome completo <span class="req">*</span></label>
+                <input class="input" type="text" id="nome" placeholder="Ex.: Caique Ribeiro" autocomplete="name">
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="nomeProfissional">Nome profissional ou da empresa</label>
+                <input class="input" type="text" id="nomeProfissional" placeholder="Ex.: Caique Ribeiro Fotografia">
+                <span class="field-error"></span>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="email">E-mail <span class="req">*</span></label>
+                <input class="input" type="email" id="email" placeholder="voce@email.com" autocomplete="email">
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="telefone">Telefone <span class="req">*</span></label>
+                <input class="input" type="tel" id="telefone" placeholder="(11) 90000-0000" autocomplete="tel">
+                <span class="field-error"></span>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="senha">Senha <span class="req">*</span>
+                  <span class="label-hint">Mínimo de 6 caracteres.</span>
+                </label>
+                <div class="input-group">
+                  <input class="input" type="password" id="senha" placeholder="Crie uma senha" autocomplete="new-password">
+                  <button class="toggle-pass" type="button" data-toggle-pass="senha" aria-label="Mostrar senha">👁</button>
+                </div>
+                <div class="pass-meter" id="pass-meter"><span></span><span></span><span></span></div>
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="confirmarSenha">Confirmar senha <span class="req">*</span></label>
+                <div class="input-group">
+                  <input class="input" type="password" id="confirmarSenha" placeholder="Repita a senha" autocomplete="new-password">
+                  <button class="toggle-pass" type="button" data-toggle-pass="confirmarSenha" aria-label="Mostrar senha">👁</button>
+                </div>
+                <span class="field-error"></span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-block btn-lg mt-8" type="submit">Continuar</button>
+          </form>
+        </div>
+
+        <p class="auth-foot">Já possui conta? <a href="login.html">Entrar</a></p>
+      </section>
+
+      <!-- ETAPA 2 — NICHO -->
+      <section id="etapa-2" class="hidden">
+        <h1>Qual é o seu tipo de serviço?</h1>
+        <p class="sub">Isso define os campos do seu orçamento e o modelo do seu contrato.</p>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="niche-grid" id="niche-grid"></div>
+            <p class="field-error mt-16" id="erro-nicho" style="display:none">Escolha um tipo de serviço para continuar.</p>
+          </div>
+          <div class="card-foot row-between">
+            <button class="btn btn-secondary" type="button" id="btn-voltar">← Voltar</button>
+            <button class="btn btn-primary" type="button" id="btn-criar-conta">Criar conta</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/store.js"></script>
+<script src="../js/services.js"></script>
+<script src="../js/components.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/cadastro.js"></script>
+</body>
+</html>

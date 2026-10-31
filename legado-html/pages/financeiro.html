@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financeiro — Trato</title>
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/tables.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+
+<aside id="sidebar"></aside>
+
+<div class="app">
+  <header id="header"></header>
+
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h2>Financeiro</h2>
+        <p class="sub">Receitas, despesas e o que ainda está por vir.</p>
+      </div>
+      <div class="filters" style="margin:0">
+        <button class="chip" type="button" data-periodo="dia">Dia</button>
+        <button class="chip" type="button" data-periodo="semana">Semana</button>
+        <button class="chip active" type="button" data-periodo="mes">Mês</button>
+        <button class="chip" type="button" data-periodo="ano">Ano</button>
+        <button class="chip" type="button" data-periodo="todos">Tudo</button>
+      </div>
+    </div>
+
+    <section class="grid grid-4 mb-24" id="fin-kpis"></section>
+
+    <div class="grid grid-main">
+      <div class="grid" style="align-content:start">
+        <section class="card">
+          <div class="card-head"><h3>Fluxo de caixa</h3><p class="sub">Entradas e saídas dos últimos 14 dias</p></div>
+          <div class="card-body" id="fin-fluxo"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-head row-between"><h3>Pagamentos</h3></div>
+          <div class="table-wrap" id="fin-pagamentos"></div>
+        </section>
+      </div>
+
+      <div class="grid" style="align-content:start">
+        <section class="card">
+          <div class="card-head"><h3>Despesas por categoria</h3></div>
+          <div class="card-body" id="fin-categorias"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/store.js"></script>
+<script src="../js/services.js"></script>
+<script src="../js/components.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/financeiro.js"></script>
+</body>
+</html>

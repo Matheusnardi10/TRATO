@@ -1,0 +1,82 @@
+/* ============================================================
+   TRATO — Tabelas
+   ============================================================ */
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+table.table thead th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 11px 18px;
+  background: #FBFCFB;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+table.table thead th.sortable { cursor: pointer; user-select: none; }
+table.table thead th.sortable:hover { color: var(--ink); }
+table.table thead th .sort-arrow { font-size: 9px; margin-left: 4px; opacity: .6; }
+
+table.table tbody td {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  vertical-align: middle;
+}
+
+table.table tbody tr:last-child td { border-bottom: 0; }
+table.table tbody tr.clickable { cursor: pointer; }
+table.table tbody tr:hover { background: #FAFBFA; }
+
+table.table td.strong,
+table.table td .primary-cell {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+table.table td.num,
+table.table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.cell-person { display: flex; align-items: center; gap: 10px; }
+.cell-person .avatar { width: 30px; height: 30px; font-size: 11px; }
+.cell-person span { font-size: 12px; color: var(--ink-3); display: block; }
+.cell-person strong { font-size: 13.5px; color: var(--ink); }
+
+.row-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.row-action {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 5px 7px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.row-action:hover { background: var(--surface-2); color: var(--ink); }
+
+.table-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--ink-3);
+}

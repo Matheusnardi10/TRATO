@@ -1,0 +1,136 @@
+<app-header titulo="Agenda" subtitulo="Seus serviços organizados por data e horário."></app-header>
+
+<main class="page">
+  @if (erro) {
+    <div class="alert alert-danger mb-24"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  <div class="agenda-toolbar">
+    <div class="agenda-nav">
+      <button type="button" (click)="navegar(-1)">‹</button>
+      <button type="button" (click)="hoje()">Hoje</button>
+      <button type="button" (click)="navegar(1)">›</button>
+    </div>
+    <div class="agenda-titulo">{{ tituloPeriodo }}</div>
+    <div class="agenda-views">
+      <button class="chip" [class.active]="visualizacao === 'mes'" type="button" (click)="visualizacao = 'mes'">Mês</button>
+      <button class="chip" [class.active]="visualizacao === 'semana'" type="button" (click)="visualizacao = 'semana'">Semana</button>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="abrirNovo()">+ Novo agendamento</button>
+  </div>
+
+  @if (visualizacao === 'mes') {
+    <div class="cal-grid">
+      @for (dn of ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']; track dn) {
+        <div class="cal-weekday">{{ dn }}</div>
+      }
+      @for (dia of dias; track dia.iso) {
+        <div class="cal-day" [class.outro-mes]="dia.outroMes" [class.hoje]="dia.hoje" [class.tem-conflito]="dia.temConflito" (click)="abrirDia(dia)">
+          <span class="cal-day-num">{{ dia.numero }}</span>
+          @for (s of dia.servicos.slice(0, 2); track s.id) {
+            <span class="cal-chip" [class.conflito]="dia.temConflito">{{ s.hora }} {{ s.titulo }}</span>
+          }
+          @if (dia.servicos.length > 2) { <span class="cal-mais">+{{ dia.servicos.length - 2 }} mais</span> }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="week-grid">
+      @for (dia of semana; track dia.iso) {
+        <div class="week-day" [class.hoje]="dia.hoje" (click)="abrirDia(dia)">
+          <div class="week-day-head">{{ dia.data.toLocaleDateString('pt-BR', { weekday: 'short' }) }}</div>
+          <div class="week-day-num">{{ dia.numero }}</div>
+          @for (s of dia.servicos; track s.id) {
+            <div class="agenda-item"><span class="hour">{{ s.hora }}</span><div class="info"><strong>{{ s.titulo }}</strong></div></div>
+          }
+        </div>
+      }
+    </div>
+  }
+</main>
+
+@if (modalDiaAberto && diaSelecionado) {
+  <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <div><h3>{{ diaSelecionado.data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' }) }}</h3><p class="sub">{{ diaSelecionado.servicos.length }} agendamento(s)</p></div>
+        <button class="modal-close" type="button" (click)="modalDiaAberto = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        @if (diaSelecionado.temConflito) {
+          <div class="alert alert-danger mb-16"><span class="alert-icon">⛔</span><div>Há serviços com o mesmo horário neste dia.</div></div>
+        }
+        @for (s of diaSelecionado.servicos; track s.id) {
+          <div class="agenda-item">
+            <span class="hour">{{ s.hora }}</span>
+            <div class="info"><strong>{{ s.titulo }}</strong><span>{{ s.clienteNome }} · {{ formatBRL(s.valor) }}</span></div>
+            <div class="row-actions">
+              <button class="row-action" type="button" title="Editar" (click)="abrirEdicao(s)">✏️</button>
+              <button class="row-action" type="button" title="Excluir" (click)="excluir(s)">🗑️</button>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty"><span class="empty-icon">📅</span><h4>Nenhum agendamento</h4></div>
+        }
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-primary" type="button" (click)="abrirNovo(diaSelecionado.iso)">+ Agendar neste dia</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (modalFormAberto) {
+  <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div><h3>{{ editandoId ? 'Editar agendamento' : 'Novo agendamento' }}</h3></div>
+        <button class="modal-close" type="button" (click)="modalFormAberto = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+          <div class="field">
+            <label>Cliente <span class="req">*</span></label>
+            <select class="select" formControlName="clienteId">
+              @for (c of clientes; track c.id) { <option [value]="c.id">{{ c.nome }}</option> }
+            </select>
+          </div>
+          <div class="field">
+            <label>Título <span class="req">*</span></label>
+            <input class="input" formControlName="titulo" placeholder="Ex.: Ensaio gestante">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Data <span class="req">*</span></label>
+              <input class="input" type="date" formControlName="data" (change)="verificarConflito()">
+            </div>
+            <div class="field">
+              <label>Hora <span class="req">*</span></label>
+              <input class="input" type="time" formControlName="hora" (change)="verificarConflito()">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Duração (horas)</label>
+              <input class="input" type="number" step="0.5" formControlName="duracaoHoras">
+            </div>
+            <div class="field">
+              <label>Valor (R$) <span class="req">*</span></label>
+              <input class="input" type="number" step="0.01" formControlName="valor">
+            </div>
+          </div>
+          @if (conflitoDetectado.length) {
+            <div class="alert alert-warning">
+              <span class="alert-icon">⚠️</span>
+              <div>Já existe "{{ conflitoDetectado[0].titulo }}" marcado para este mesmo horário.</div>
+            </div>
+          }
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" type="button" (click)="modalFormAberto = false">Cancelar</button>
+        <button class="btn btn-primary" type="button" [disabled]="salvando" (click)="salvar()">{{ salvando ? 'Salvando...' : 'Salvar' }}</button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,88 @@
+<app-header titulo="Financeiro" subtitulo="Receitas, despesas e fluxo de caixa."></app-header>
+
+<main class="page">
+  @if (erro) {
+    <div class="alert alert-danger mb-24"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  <div class="filters">
+    <button class="chip" [class.active]="periodo === 'dia'" type="button" (click)="filtrar('dia')">Hoje</button>
+    <button class="chip" [class.active]="periodo === 'semana'" type="button" (click)="filtrar('semana')">Semana</button>
+    <button class="chip" [class.active]="periodo === 'mes'" type="button" (click)="filtrar('mes')">Mês</button>
+    <button class="chip" [class.active]="periodo === 'ano'" type="button" (click)="filtrar('ano')">Ano</button>
+    <button class="chip" [class.active]="periodo === 'todos'" type="button" (click)="filtrar('todos')">Tudo</button>
+  </div>
+
+  @if (resumo) {
+    <section class="grid grid-4 mb-24">
+      <article class="kpi is-revenue"><div class="kpi-label">Receitas</div><div class="kpi-value">{{ formatBRL(resumo.receitas) }}</div></article>
+      <article class="kpi is-cost"><div class="kpi-label">Despesas</div><div class="kpi-value">{{ formatBRL(resumo.despesas) }}</div></article>
+      <article class="kpi is-profit"><div class="kpi-label">Saldo</div><div class="kpi-value">{{ formatBRL(resumo.saldo) }}</div><div class="kpi-foot">recebido no período: {{ formatBRL(resumo.recebidoNoPeriodo) }}</div></article>
+      <article class="kpi is-count"><div class="kpi-label">A receber</div><div class="kpi-value">{{ formatBRL(resumo.aReceber) }}</div></article>
+    </section>
+  }
+
+  <div class="grid grid-main">
+    <div class="grid" style="align-content:start">
+      <section class="card">
+        <div class="card-head"><div><h3>Fluxo de caixa</h3><p class="sub">Últimos 30 dias — entradas x saídas</p></div></div>
+        <div class="card-body">
+          @if (fluxo.length) {
+            @for (f of fluxo; track f.data) {
+              @if (f.entradas || f.saidas) {
+                <div class="mini-stat">
+                  <span>{{ formatDate(f.data) }}</span>
+                  <span class="ms-value pos">{{ formatBRL(f.entradas) }}</span>
+                </div>
+                <div class="progress"><i [style.width.%]="(f.entradas / maiorFluxo) * 100"></i></div>
+              }
+            }
+          } @else {
+            <div class="empty"><span class="empty-icon">💸</span><h4>Sem movimentações recentes</h4></div>
+          }
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><div><h3>Contas a receber</h3><p class="sub">Pagamentos vinculados aos serviços</p></div></div>
+        <div class="table-wrap">
+          @if (pagamentos.length) {
+            <table class="table">
+              <thead><tr><th>Vencimento</th><th class="num">Total</th><th class="num">Recebido</th><th>Status</th></tr></thead>
+              <tbody>
+                @for (p of pagamentos; track p.id) {
+                  <tr>
+                    <td class="small">{{ formatDate(p.dataPrevista) }}</td>
+                    <td class="num">{{ formatBRL(p.valorTotal) }}</td>
+                    <td class="num">{{ formatBRL(p.valorRecebido) }}</td>
+                    <td><span class="badge" [ngClass]="statusMap[p.status]?.classe">{{ statusMap[p.status]?.label }}</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else if (!carregando) {
+            <div class="empty"><span class="empty-icon">💳</span><h4>Nenhum pagamento</h4></div>
+          }
+        </div>
+      </section>
+    </div>
+
+    <div class="grid" style="align-content:start">
+      <section class="card">
+        <div class="card-head"><h3>Despesas por categoria</h3></div>
+        <div class="card-body">
+          @if (categorias.length) {
+            @for (c of categorias; track c.id) {
+              @if (c.valor > 0) {
+                <div class="mini-stat"><span>{{ c.emoji }} {{ c.nome }}</span><span class="ms-value">{{ formatBRL(c.valor) }}</span></div>
+                <div class="progress"><i [style.width.%]="(c.valor / totalDespesas) * 100"></i></div>
+              }
+            }
+          } @else {
+            <div class="empty"><span class="empty-icon">📦</span><h4>Nenhuma despesa no período</h4></div>
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+</main>

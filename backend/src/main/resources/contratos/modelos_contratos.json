@@ -1,0 +1,1446 @@
+{
+  "meta": {
+    "versao_schema": "1.0.0",
+    "versao_modelos": "2026.09.30",
+    "idioma": "pt-BR",
+    "sintaxe_placeholders": "{{chave}} = substituição; {{defaults.x}} = valor padrão do sistema; expressões {{campo ? 'A' : 'B'}} e 'condicao' exigem um avaliador simples no backend (ou pré-processar em booleano)",
+    "aviso_legal": "Modelos-base elaborados a partir da legislação brasileira vigente. Revisão por advogado inscrito na OAB é recomendada antes do uso em produção. O Trato não presta assessoria jurídica; os modelos são minutas editáveis.",
+    "terminologia": {
+      "CONTRATADO": "usuário do Trato (prestador)",
+      "CONTRATANTE": "cliente final do usuário"
+    }
+  },
+  "defaults": {
+    "multa_mora_percentual": 2,
+    "juros_mora_percentual_mes": 1,
+    "correcao_monetaria": "IPCA",
+    "aviso_previo_dias": 5,
+    "garantia_servico_dias": 90,
+    "validade_orcamento_dias": 10,
+    "prazo_reclamacao_aceite_dias": 5
+  },
+  "campos_comuns": [
+    {
+      "chave": "contratante.nome",
+      "rotulo": "Nome / Razão social",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true,
+      "minimo": 3
+    },
+    {
+      "chave": "contratante.tipo_pessoa",
+      "rotulo": "Tipo de pessoa",
+      "tipo": "enum",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true,
+      "opcoes": [
+        "PF",
+        "PJ"
+      ],
+      "default": "PF"
+    },
+    {
+      "chave": "contratante.documento",
+      "rotulo": "CPF / CNPJ",
+      "tipo": "documento",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true,
+      "validacao": "cpf_ou_cnpj_com_digito_verificador"
+    },
+    {
+      "chave": "contratante.cep",
+      "rotulo": "CEP",
+      "tipo": "cep",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contratante.logradouro",
+      "rotulo": "Rua / Avenida",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contratante.numero",
+      "rotulo": "Número",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contratante.complemento",
+      "rotulo": "Complemento",
+      "tipo": "texto",
+      "obrigatorio": false,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contratante.bairro",
+      "rotulo": "Bairro",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contratante.cidade",
+      "rotulo": "Cidade",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contratante.uf",
+      "rotulo": "UF",
+      "tipo": "uf",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contratante.email",
+      "rotulo": "E-mail",
+      "tipo": "email",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contratante.telefone",
+      "rotulo": "Telefone / WhatsApp",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "servico.descricao",
+      "rotulo": "Descrição do serviço",
+      "tipo": "texto_longo",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true,
+      "minimo": 20
+    },
+    {
+      "chave": "contrato.data_inicio",
+      "rotulo": "Data de início",
+      "tipo": "data",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contrato.data_termino_prevista",
+      "rotulo": "Conclusão / entrega prevista",
+      "tipo": "data",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true
+    },
+    {
+      "chave": "contrato.valor_total",
+      "rotulo": "Valor total (R$)",
+      "tipo": "moeda",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true,
+      "minimo": 0.01
+    },
+    {
+      "chave": "pagamento.condicoes",
+      "rotulo": "Condições de pagamento",
+      "tipo": "texto_longo",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true,
+      "exemplos": [
+        "À vista na assinatura",
+        "50% de entrada e 50% na conclusão",
+        "Em 3 parcelas mensais iguais, vencendo todo dia 10"
+      ]
+    },
+    {
+      "chave": "contrato.local_execucao",
+      "rotulo": "Local de execução",
+      "tipo": "texto",
+      "obrigatorio": false,
+      "editavel_pelo_usuario": true,
+      "default": "Endereço do CONTRATANTE"
+    },
+    {
+      "chave": "contrato.foro_cidade",
+      "rotulo": "Foro – cidade",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true,
+      "default": "{{contratante.cidade}}"
+    },
+    {
+      "chave": "contrato.foro_uf",
+      "rotulo": "Foro – UF",
+      "tipo": "uf",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": true,
+      "default": "{{contratante.uf}}"
+    },
+    {
+      "chave": "contratante.documento_tipo",
+      "rotulo": "CPF ou CNPJ (rótulo)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": false,
+      "calculado": "PF->CPF, PJ->CNPJ"
+    },
+    {
+      "chave": "contratante.endereco_completo",
+      "rotulo": "Endereço completo",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": false,
+      "calculado": "concatenação dos campos de endereço"
+    },
+    {
+      "chave": "contrato.valor_total_extenso",
+      "rotulo": "Valor por extenso",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": false,
+      "calculado": "valor_total por extenso em reais e centavos"
+    },
+    {
+      "chave": "contrato.data_assinatura",
+      "rotulo": "Data da assinatura",
+      "tipo": "data",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": false,
+      "calculado": "timestamp da assinatura eletrônica"
+    },
+    {
+      "chave": "contrato.cidade_assinatura",
+      "rotulo": "Cidade da assinatura",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": false,
+      "calculado": "cidade do contratado"
+    },
+    {
+      "chave": "contratado.*",
+      "rotulo": "Dados do prestador (nome, documento, endereço, e-mail, telefone)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "editavel_pelo_usuario": false,
+      "origem": "perfil do usuário no Trato"
+    }
+  ],
+  "cabecalho_partes": [
+    "CONTRATANTE: {{contratante.nome}}, inscrito(a) no {{contratante.documento_tipo}} sob nº {{contratante.documento}}, residente/sediado(a) em {{contratante.endereco_completo}}, e-mail {{contratante.email}}, telefone {{contratante.telefone}}.",
+    "CONTRATADO: {{contratado.nome}}, inscrito(a) no {{contratado.documento_tipo}} sob nº {{contratado.documento}}, com endereço em {{contratado.endereco_completo}}, e-mail {{contratado.email}}, telefone {{contratado.telefone}}.",
+    "As partes acima identificadas têm entre si justo e contratado o presente instrumento, que se regerá pelas cláusulas seguintes e pelas disposições legais aplicáveis."
+  ],
+  "clausulas_comuns": [
+    {
+      "id": "objeto",
+      "titulo": "DO OBJETO",
+      "paragrafos": [
+        "O presente contrato tem por objeto a prestação, pelo CONTRATADO ao CONTRATANTE, dos seguintes serviços: {{servico.descricao}}.",
+        "Os serviços serão executados em {{contrato.local_execucao}}.",
+        "Qualquer serviço não descrito nesta cláusula será objeto de novo orçamento e de aditivo escrito."
+      ],
+      "base_legal": [
+        "CC, arts. 593 a 609 (prestação de serviço)",
+        "CC, art. 104 (objeto lícito, possível e determinado)"
+      ]
+    },
+    {
+      "id": "prazo",
+      "titulo": "DO PRAZO",
+      "paragrafos": [
+        "A execução terá início em {{contrato.data_inicio}}, com conclusão prevista para {{contrato.data_termino_prevista}}.",
+        "Os prazos poderão ser prorrogados pelo tempo equivalente ao de eventuais atrasos causados pelo CONTRATANTE (falta de acesso, de informações, de materiais ou de pagamento), por alterações de escopo ou por caso fortuito ou força maior."
+      ],
+      "base_legal": [
+        "CC, art. 393 (caso fortuito e força maior)"
+      ]
+    },
+    {
+      "id": "preco_pagamento",
+      "titulo": "DO PREÇO E DA FORMA DE PAGAMENTO",
+      "paragrafos": [
+        "Pelos serviços objeto deste contrato, o CONTRATANTE pagará ao CONTRATADO o valor total de R$ {{contrato.valor_total}} ({{contrato.valor_total_extenso}}).",
+        "O pagamento será efetuado da seguinte forma: {{pagamento.condicoes}}.",
+        "Despesas não previstas neste contrato, somente serão devidas se previamente autorizadas por escrito pelo CONTRATANTE."
+      ],
+      "base_legal": [
+        "CC, art. 594 (retribuição)",
+        "CDC, art. 40 (orçamento prévio, quando aplicável)"
+      ]
+    },
+    {
+      "id": "atraso",
+      "titulo": "DO ATRASO NO PAGAMENTO",
+      "paragrafos": [
+        "Em caso de atraso no pagamento de qualquer valor, incidirão multa moratória de {{defaults.multa_mora_percentual}}% (dois por cento) sobre o valor em atraso, juros de mora de {{defaults.juros_mora_percentual_mes}}% (um por cento) ao mês, calculados pro rata die, e correção monetária pelo {{defaults.correcao_monetaria}}."
+      ],
+      "base_legal": [
+        "CC, arts. 389, 395 e 406",
+        "CDC, art. 52, §1º (limite de 2% de multa em relação de consumo)"
+      ]
+    },
+    {
+      "id": "obrigacoes_contratado",
+      "titulo": "DAS OBRIGAÇÕES DO CONTRATADO",
+      "paragrafos": [
+        "O CONTRATADO compromete-se a executar os serviços com diligência, zelo e técnica adequada, observando as normas aplicáveis à sua atividade, e a manter o CONTRATANTE informado sobre o andamento dos trabalhos.",
+        "O CONTRATADO é profissional autônomo/independente, responsável pela organização do próprio trabalho, por seus encargos fiscais, previdenciários e trabalhistas e pelos de eventuais auxiliares que contratar, não havendo entre as partes subordinação, exclusividade ou vínculo empregatício."
+      ],
+      "base_legal": [
+        "CC, arts. 593 e seguintes",
+        "CLT, arts. 2º e 3º (ausência de subordinação)"
+      ]
+    },
+    {
+      "id": "obrigacoes_contratante",
+      "titulo": "DAS OBRIGAÇÕES DO CONTRATANTE",
+      "paragrafos": [
+        "O CONTRATANTE compromete-se a fornecer, em tempo hábil, as informações, materiais, autorizações e condições de acesso necessários à execução dos serviços, a efetuar os pagamentos nas datas ajustadas e a comunicar ao CONTRATADO, por escrito, qualquer divergência ou reclamação sobre os serviços em até {{defaults.prazo_reclamacao_aceite_dias}} dias após a entrega ou conclusão, sob pena de se considerarem aceitos, sem prejuízo dos direitos previstos em lei."
+      ],
+      "base_legal": [
+        "CC, art. 422 (boa-fé objetiva)",
+        "CDC, arts. 26 e 27 (prazos de reclamação e garantia legal)"
+      ]
+    },
+    {
+      "id": "alteracoes",
+      "titulo": "DAS ALTERAÇÕES DE ESCOPO",
+      "paragrafos": [
+        "Qualquer alteração, acréscimo ou supressão nos serviços contratados dependerá de concordância de ambas as partes, formalizada por escrito (inclusive por meio da plataforma Trato, e-mail ou aplicativo de mensagens), podendo implicar ajuste de preço e de prazo."
+      ],
+      "base_legal": [
+        "CC, art. 421 (liberdade contratual)",
+        "CC, art. 619 (alterações em empreitada)"
+      ]
+    },
+    {
+      "id": "garantia",
+      "titulo": "DA GARANTIA",
+      "paragrafos": [
+        "O CONTRATADO garante a qualidade dos serviços executados pelo prazo de {{defaults.garantia_servico_dias}} dias contados da conclusão, sem prejuízo da garantia legal quando aplicável. A garantia não cobre danos decorrentes de mau uso, intervenção de terceiros, desgaste natural, caso fortuito ou força maior."
+      ],
+      "base_legal": [
+        "CDC, art. 26, II (90 dias para serviços duráveis)",
+        "CDC, art. 50 (garantia contratual complementar)"
+      ]
+    },
+    {
+      "id": "limitacao_responsabilidade",
+      "titulo": "DA LIMITAÇÃO DE RESPONSABILIDADE",
+      "paragrafos": [
+        "A responsabilidade do CONTRATADO por eventuais danos decorrentes deste contrato fica limitada ao valor total contratado, salvo em caso de dolo ou culpa grave."
+      ],
+      "base_legal": [
+        "CC, art. 421 e 421-A (paridade e simetria em contratos empresariais)",
+        "CDC, art. 51, I (nula em relação de consumo — por isso só vale para PJ)"
+      ],
+      "condicao": "contratante.tipo_pessoa == 'PJ'"
+    },
+    {
+      "id": "rescisao",
+      "titulo": "DA RESCISÃO",
+      "paragrafos": [
+        "Qualquer das partes poderá rescindir este contrato, sem justo motivo, mediante notificação escrita com antecedência mínima de {{defaults.aviso_previo_dias}} dias, ficando o CONTRATANTE obrigado a pagar pelos serviços já executados e pelos materiais e despesas comprovadamente realizados até a data da rescisão.",
+        "O descumprimento de qualquer obrigação essencial por uma das partes autoriza a outra a rescindir o contrato imediatamente, mediante notificação escrita, sem prejuízo das perdas e danos cabíveis.",
+        "Quando se tratar de obra ou serviço sob empreitada, a desistência pelo CONTRATANTE após o início da execução obriga-o a indenizar o CONTRATADO pelas despesas e pelo trabalho já realizados, além de lucros cessantes razoáveis."
+      ],
+      "base_legal": [
+        "CC, arts. 472, 473 e 599 (resilição e aviso prévio)",
+        "CC, art. 475 (resolução por inadimplemento)",
+        "CC, art. 623 (desistência na empreitada)"
+      ]
+    },
+    {
+      "id": "caso_fortuito",
+      "titulo": "DO CASO FORTUITO E DA FORÇA MAIOR",
+      "paragrafos": [
+        "Nenhuma das partes responderá pelo descumprimento de obrigações decorrente de caso fortuito ou força maior, nos termos da lei, devendo comunicar a outra parte assim que tiver ciência do evento."
+      ],
+      "base_legal": [
+        "CC, art. 393"
+      ]
+    },
+    {
+      "id": "lgpd",
+      "titulo": "DA PROTEÇÃO DE DADOS PESSOAIS",
+      "paragrafos": [
+        "As partes tratarão os dados pessoais uma da outra exclusivamente para a execução deste contrato, o cumprimento de obrigações legais e o exercício regular de direitos, adotando medidas de segurança adequadas e compartilhando tais dados apenas quando estritamente necessário, em conformidade com a Lei nº 13.709/2018."
+      ],
+      "base_legal": [
+        "LGPD, art. 6º (finalidade, necessidade, segurança)",
+        "LGPD, art. 7º, V e VI (execução de contrato e exercício regular de direitos)"
+      ]
+    },
+    {
+      "id": "comunicacoes_assinatura",
+      "titulo": "DAS COMUNICAÇÕES E DA ASSINATURA ELETRÔNICA",
+      "paragrafos": [
+        "As comunicações entre as partes poderão ser feitas por e-mail, aplicativo de mensagens ou pela plataforma Trato, nos contatos informados neste instrumento.",
+        "As partes reconhecem a validade e a eficácia deste contrato firmado por assinatura eletrônica, ainda que por meio diverso do certificado ICP-Brasil, nos termos da lei, admitindo como prova de autoria e integridade os registros de assinatura (data, hora, endereço IP e código de verificação do documento)."
+      ],
+      "base_legal": [
+        "Lei 14.063/2020 (assinaturas eletrônicas)",
+        "MP 2.200-2/2001, art. 10, §2º",
+        "CC, art. 107 (liberdade de forma)",
+        "CPC, art. 784, III e §4º (título executivo extrajudicial)"
+      ]
+    },
+    {
+      "id": "disposicoes_gerais",
+      "titulo": "DAS DISPOSIÇÕES GERAIS",
+      "paragrafos": [
+        "Este contrato representa o acordo integral entre as partes sobre o seu objeto e substitui entendimentos anteriores. A tolerância de uma parte quanto ao descumprimento pela outra não implica renúncia ou novação. Se qualquer cláusula for considerada inválida, as demais permanecerão em vigor.",
+        "Aplica-se o Código de Defesa do Consumidor naquilo em que a relação entre as partes configurar relação de consumo."
+      ],
+      "base_legal": [
+        "CC, arts. 421, 422 e 113",
+        "Lei 13.874/2019 (Liberdade Econômica)"
+      ]
+    },
+    {
+      "id": "foro",
+      "titulo": "DO FORO",
+      "paragrafos": [
+        "Fica eleito o foro da comarca de {{contrato.foro_cidade}}/{{contrato.foro_uf}} para dirimir quaisquer controvérsias oriundas deste contrato, ressalvado o direito do CONTRATANTE consumidor de demandar no foro de seu domicílio."
+      ],
+      "base_legal": [
+        "CPC, art. 63",
+        "CDC, art. 101, I"
+      ]
+    }
+  ],
+  "ordem_renderizacao": [
+    "cabecalho_partes",
+    "objeto",
+    "<clausulas_especificas_do_nicho>",
+    "prazo",
+    "preco_pagamento",
+    "atraso",
+    "obrigacoes_contratado",
+    "obrigacoes_contratante",
+    "alteracoes",
+    "garantia",
+    "limitacao_responsabilidade",
+    "rescisao",
+    "caso_fortuito",
+    "lgpd",
+    "comunicacoes_assinatura",
+    "disposicoes_gerais",
+    "foro",
+    "bloco_assinatura"
+  ],
+  "numeracao": "automatica (Cláusula 1ª, 2ª, ...) gerada pelo backend na ordem final; não referenciar cláusulas por número no texto",
+  "bloco_assinatura": {
+    "texto": "{{contrato.cidade_assinatura}}, {{contrato.data_assinatura}}.",
+    "assinantes": [
+      "CONTRATANTE",
+      "CONTRATADO"
+    ],
+    "testemunhas": {
+      "quantidade": 2,
+      "obrigatorio": false,
+      "campos": [
+        "nome",
+        "cpf"
+      ],
+      "nota": "Duas testemunhas reforçam a força de título executivo extrajudicial (CPC, art. 784, III); na assinatura eletrônica, a integridade verificada pelo provedor pode dispensá-las (CPC, art. 784, §4º)."
+    },
+    "evidencias_a_registrar": [
+      "timestamp UTC",
+      "IP",
+      "user-agent",
+      "e-mail/telefone validado",
+      "hash SHA-256 do PDF final",
+      "versao_modelos"
+    ]
+  },
+  "nichos": [
+    {
+      "nicho_id": "fotografo",
+      "nome": "Fotógrafo",
+      "icone": "📸",
+      "tipo_contratual": "prestacao_servicos",
+      "base_legal_principal": [
+        "CC arts. 593-609",
+        "Lei 9.610/98 (arts. 29, 49 e 79)",
+        "CF art. 5º, X e CC art. 20 (imagem)",
+        "LGPD"
+      ],
+      "titulo_documento": "CONTRATO DE PRESTAÇÃO DE SERVIÇOS – FOTÓGRAFO",
+      "sugestao_descricao_servico": "Ensaio fotográfico / cobertura de evento, com entrega de galeria digital de fotografias tratadas.",
+      "campos_especificos": [
+        {
+          "chave": "foto.tipo",
+          "rotulo": "Tipo de trabalho",
+          "tipo": "enum",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "opcoes": [
+            "Ensaio",
+            "Evento",
+            "Cobertura",
+            "Produto",
+            "Outro"
+          ]
+        },
+        {
+          "chave": "foto.data_hora_sessao",
+          "rotulo": "Data e hora da sessão/evento",
+          "tipo": "datahora",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "foto.duracao_horas",
+          "rotulo": "Duração da cobertura (horas)",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "foto.qtd_minima_fotos",
+          "rotulo": "Quantidade mínima de fotos tratadas",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "foto.prazo_entrega_dias",
+          "rotulo": "Prazo de entrega (dias corridos)",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": 30
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "foto_entrega",
+          "titulo": "DA ENTREGA E DO TRATAMENTO DAS IMAGENS",
+          "paragrafos": [
+            "O CONTRATADO realizará {{foto.tipo}} em {{foto.data_hora_sessao}}, com duração de {{foto.duracao_horas}} hora(s), e entregará no mínimo {{foto.qtd_minima_fotos}} fotografias tratadas, em formato digital, em até {{foto.prazo_entrega_dias}} dias corridos após a sessão ou evento.",
+            "A seleção, o enquadramento e o tratamento das imagens seguem o estilo e o critério técnico do CONTRATADO. Imagens não tratadas (brutas) não integram a entrega, salvo ajuste escrito."
+          ],
+          "base_legal": [
+            "CC, art. 594"
+          ]
+        },
+        {
+          "id": "foto_direitos",
+          "titulo": "DOS DIREITOS AUTORAIS E DE IMAGEM",
+          "paragrafos": [
+            "Os direitos autorais sobre as fotografias pertencem ao CONTRATADO, que concede ao CONTRATANTE licença de uso não exclusiva, por prazo indeterminado, para fins pessoais e para divulgação não comercial. O uso comercial, a venda ou a cessão a terceiros dependem de autorização escrita do CONTRATADO.",
+            "O CONTRATANTE autoriza o CONTRATADO a utilizar as imagens em seu portfólio, site e redes sociais, salvo manifestação escrita em contrário, que deverá ser feita no ato da assinatura. Sempre que as imagens retratarem terceiros, o CONTRATANTE responde por obter as autorizações necessárias para o evento, quando exigidas.",
+            "Em qualquer uso, serão respeitados os direitos morais do autor, inclusive o crédito de autoria."
+          ],
+          "base_legal": [
+            "Lei 9.610/98, art. 29 (autorização expressa)",
+            "Lei 9.610/98, art. 49 (cessão interpretada restritivamente)",
+            "Lei 9.610/98, art. 79 (direitos sobre fotografia)",
+            "CF, art. 5º, X; CC, art. 20"
+          ]
+        },
+        {
+          "id": "foto_cancelamento",
+          "titulo": "DO CANCELAMENTO, DA REMARCAÇÃO E DO ARQUIVO",
+          "paragrafos": [
+            "A remarcação da data poderá ser solicitada com antecedência mínima de 7 dias, sujeita à disponibilidade de agenda do CONTRATADO. Em caso de cancelamento pelo CONTRATANTE, os valores já pagos a título de reserva de data não serão devolvidos, por cobrirem a indisponibilidade da agenda, limitados ao valor proporcional do trabalho efetivamente reservado.",
+            "Impossibilidade de comparecimento por motivo de saúde ou força maior comprovados do CONTRATADO ensejará remarcação ou devolução integral dos valores pagos.",
+            "O CONTRATADO manterá cópia de segurança das imagens por 90 dias após a entrega, sem obrigação de guarda após esse prazo."
+          ],
+          "base_legal": [
+            "CC, arts. 393, 473 e 623"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "eletricista",
+      "nome": "Eletricista",
+      "icone": "🔌",
+      "tipo_contratual": "prestacao_servicos",
+      "base_legal_principal": [
+        "CC arts. 593-609",
+        "CDC arts. 14 e 26",
+        "ABNT NBR 5410 e NR-10 (quando aplicáveis)",
+        "CC art. 610 §1º (materiais)"
+      ],
+      "titulo_documento": "CONTRATO DE PRESTAÇÃO DE SERVIÇOS – ELETRICISTA",
+      "sugestao_descricao_servico": "Instalação, reparo ou manutenção elétrica (especificar pontos, circuitos, quadro, tomadas, iluminação, etc.).",
+      "campos_especificos": [
+        {
+          "chave": "eletrica.materiais_por_conta",
+          "rotulo": "Materiais fornecidos por",
+          "tipo": "enum",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "opcoes": [
+            "CONTRATANTE",
+            "CONTRATADO"
+          ],
+          "default": "CONTRATANTE"
+        },
+        {
+          "chave": "eletrica.inclui_materiais_valor",
+          "rotulo": "Materiais incluídos no valor total?",
+          "tipo": "booleano",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": false
+        },
+        {
+          "chave": "eletrica.art_rrt",
+          "rotulo": "Serviço exige ART/laudo de profissional habilitado?",
+          "tipo": "booleano",
+          "obrigatorio": false,
+          "editavel_pelo_usuario": true,
+          "default": false
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "eletr_norma",
+          "titulo": "DA EXECUÇÃO TÉCNICA E DA SEGURANÇA",
+          "paragrafos": [
+            "Os serviços serão executados conforme as normas técnicas aplicáveis, em especial a ABNT NBR 5410 e, quando cabível, a NR-10, utilizando-se materiais que atendam às especificações técnicas e de certificação exigidas.",
+            "O CONTRATADO poderá interromper a execução se constatar risco à segurança de pessoas ou do imóvel, informando imediatamente o CONTRATANTE e indicando as providências necessárias.",
+            "O CONTRATANTE se compromete a permitir o desligamento de circuitos e o acesso a quadros e pontos de instalação, e declara ter informado ao CONTRATADO as condições conhecidas da instalação existente."
+          ],
+          "base_legal": [
+            "NBR 5410",
+            "NR-10",
+            "CC, art. 422"
+          ]
+        },
+        {
+          "id": "eletr_materiais",
+          "titulo": "DOS MATERIAIS",
+          "paragrafos": [
+            "Os materiais serão fornecidos por: {{eletrica.materiais_por_conta}}. Quando fornecidos pelo CONTRATADO, seu custo {{eletrica.inclui_materiais_valor ? 'está incluído' : 'NÃO está incluído'}} no valor total, e materiais que o CONTRATANTE adquirir por conta própria devem atender às especificações indicadas pelo CONTRATADO, que não responde por defeitos de materiais inadequados fornecidos pelo CONTRATANTE.",
+            "Materiais e componentes substituídos permanecem de propriedade do CONTRATANTE, salvo ajuste em contrário."
+          ],
+          "base_legal": [
+            "CC, art. 610, §1º (materiais só por conta do empreiteiro se convencionado)"
+          ]
+        },
+        {
+          "id": "eletr_pre_existente",
+          "titulo": "DAS CONDIÇÕES PRÉ-EXISTENTES",
+          "paragrafos": [
+            "O CONTRATADO não responde por falhas, sobrecargas ou irregularidades preexistentes em partes da instalação não abrangidas pelo objeto deste contrato, mas se constatá-las deverá informar o CONTRATANTE por escrito, recomendando a correção."
+          ],
+          "base_legal": [
+            "CC, arts. 422 e 927"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "ar_condicionado",
+      "nome": "Técnico de Ar-condicionado",
+      "icone": "❄️",
+      "tipo_contratual": "prestacao_servicos",
+      "base_legal_principal": [
+        "CC arts. 593-609",
+        "CDC arts. 14, 21 e 26",
+        "Lei 13.589/2018 (PMOC)",
+        "Lei 12.305/2010 (resíduos)"
+      ],
+      "titulo_documento": "CONTRATO DE PRESTAÇÃO DE SERVIÇOS – TÉCNICO DE AR-CONDICIONADO",
+      "sugestao_descricao_servico": "Instalação, limpeza ou manutenção de ar-condicionado (especificar quantidade de aparelhos, tipo e BTUs).",
+      "campos_especificos": [
+        {
+          "chave": "ar.tipo_servico",
+          "rotulo": "Tipo de serviço",
+          "tipo": "enum",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "opcoes": [
+            "Instalação",
+            "Limpeza/higienização",
+            "Manutenção preventiva",
+            "Manutenção corretiva"
+          ]
+        },
+        {
+          "chave": "ar.equipamentos",
+          "rotulo": "Equipamentos (marca/modelo/BTUs/quantidade)",
+          "tipo": "texto_longo",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "ar.ambiente_uso_coletivo",
+          "rotulo": "Ambiente de uso público ou coletivo (exige PMOC)?",
+          "tipo": "booleano",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": false
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "ar_execucao",
+          "titulo": "DA EXECUÇÃO DO SERVIÇO",
+          "paragrafos": [
+            "O serviço de {{ar.tipo_servico}} incidirá sobre os seguintes equipamentos: {{ar.equipamentos}}.",
+            "O CONTRATANTE declara que a infraestrutura elétrica, de drenagem e de estrutura de fixação atende às especificações do fabricante, ou deverá ser adequada a suas expensas, conforme orientação do CONTRATADO.",
+            "Peças e insumos necessários além dos previstos serão orçados previamente e somente serão aplicados mediante autorização do CONTRATANTE."
+          ],
+          "base_legal": [
+            "CDC, art. 40 (orçamento prévio)",
+            "CC, art. 594"
+          ]
+        },
+        {
+          "id": "ar_pecas_gas",
+          "titulo": "DAS PEÇAS, DO GÁS REFRIGERANTE E DA GARANTIA DE FÁBRICA",
+          "paragrafos": [
+            "Na reposição de peças será empregado componente original ou que mantenha as especificações técnicas do fabricante, salvo autorização em contrário do CONTRATANTE.",
+            "O descarte ou recolhimento de gás refrigerante, peças e embalagens será feito conforme a legislação ambiental aplicável.",
+            "O CONTRATANTE declara estar ciente de que a intervenção de terceiros em equipamento em garantia pode afetar a garantia do fabricante, cabendo a ele verificar as condições do fabricante antes da contratação."
+          ],
+          "base_legal": [
+            "CDC, art. 21 (peças originais)",
+            "Lei 12.305/2010 (PNRS)"
+          ]
+        },
+        {
+          "id": "ar_pmoc",
+          "titulo": "DO PLANO DE MANUTENÇÃO (PMOC)",
+          "paragrafos": [
+            "Quando o ambiente for de uso público ou coletivo, a manutenção seguirá o Plano de Manutenção, Operação e Controle (PMOC) exigido por lei, cuja elaboração e responsabilidade técnica competirão a profissional habilitado, conforme a legislação, não estando incluídos neste contrato, salvo ajuste expresso."
+          ],
+          "base_legal": [
+            "Lei 13.589/2018",
+            "Portaria MS 3.523/1998"
+          ],
+          "condicao": "ar.ambiente_uso_coletivo == true"
+        }
+      ]
+    },
+    {
+      "nicho_id": "pintor",
+      "nome": "Pintor",
+      "icone": "🎨",
+      "tipo_contratual": "empreitada",
+      "base_legal_principal": [
+        "CC arts. 610-626 (empreitada)",
+        "CDC art. 26",
+        "NR-35 (trabalho em altura, quando aplicável)"
+      ],
+      "titulo_documento": "CONTRATO DE EMPREITADA (PRESTAÇÃO DE SERVIÇOS COM OBRA) – PINTOR",
+      "sugestao_descricao_servico": "Pintura residencial/comercial (especificar ambientes, paredes/tetos, tipo de tinta e preparação).",
+      "campos_especificos": [
+        {
+          "chave": "pintura.area_m2",
+          "rotulo": "Área aproximada (m²)",
+          "tipo": "numero",
+          "obrigatorio": false,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "pintura.tintas_por_conta",
+          "rotulo": "Tintas e materiais por conta de",
+          "tipo": "enum",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "opcoes": [
+            "CONTRATANTE",
+            "CONTRATADO"
+          ],
+          "default": "CONTRATANTE"
+        },
+        {
+          "chave": "pintura.demaos",
+          "rotulo": "Nº de demãos",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": 2
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "pint_escopo",
+          "titulo": "DO ESCOPO DA PINTURA",
+          "paragrafos": [
+            "Os serviços abrangem a preparação das superfícies (lixamento, correção de pequenas imperfeições e aplicação de selador/massa, quando previstos na descrição do serviço) e a aplicação de {{pintura.demaos}} demão(s) de tinta, em área aproximada de {{pintura.area_m2}} m².",
+            "Tintas e materiais serão fornecidos por: {{pintura.tintas_por_conta}}. Mudanças de cor ou de produto após o início dos trabalhos poderão gerar custos e prazos adicionais.",
+            "O CONTRATANTE deverá remover ou liberar móveis e objetos de valor do local; o CONTRATADO protegerá o que permanecer, com materiais adequados."
+          ],
+          "base_legal": [
+            "CC, art. 610 e §1º",
+            "CC, art. 619 (alteração do projeto)"
+          ]
+        },
+        {
+          "id": "pint_problemas",
+          "titulo": "DE PROBLEMAS ESTRUTURAIS E DA VARIAÇÃO DE TONALIDADE",
+          "paragrafos": [
+            "O CONTRATADO não responde por manchas, infiltrações, mofo ou descascamento originados por umidade, vazamentos ou falhas estruturais ocultas ou não sanadas, devendo informar o CONTRATANTE quando as constatar.",
+            "Pequenas variações de tonalidade entre a cor escolhida no catálogo ou na amostra e a aplicada decorrem de fatores como luminosidade, textura e lote de tinta, não constituindo defeito."
+          ],
+          "base_legal": [
+            "CC, art. 392 e 393"
+          ]
+        },
+        {
+          "id": "pint_altura",
+          "titulo": "DO TRABALHO EM ALTURA",
+          "paragrafos": [
+            "Serviços em altura serão executados com equipamentos de proteção e andaimes/escadas adequados, observando-se a NR-35. O CONTRATANTE deverá garantir condições seguras de acesso e de instalação dos equipamentos."
+          ],
+          "base_legal": [
+            "NR-35"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "pedreiro",
+      "nome": "Pedreiro",
+      "icone": "🧱",
+      "tipo_contratual": "empreitada",
+      "base_legal_principal": [
+        "CC arts. 610-626 (empreitada)",
+        "CC art. 618 (solidez e segurança)",
+        "Lei 6.496/77 (ART) e Lei 12.378/2010 (RRT)",
+        "CONAMA 307/2002 (entulho)",
+        "NR-18"
+      ],
+      "titulo_documento": "CONTRATO DE EMPREITADA (PRESTAÇÃO DE SERVIÇOS COM OBRA) – PEDREIRO",
+      "sugestao_descricao_servico": "Obra/reforma (especificar demolição, alvenaria, reboco, contrapiso, acabamentos, metragem, etapas).",
+      "campos_especificos": [
+        {
+          "chave": "obra.materiais_por_conta",
+          "rotulo": "Materiais por conta de",
+          "tipo": "enum",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "opcoes": [
+            "CONTRATANTE",
+            "CONTRATADO"
+          ],
+          "default": "CONTRATANTE"
+        },
+        {
+          "chave": "obra.modalidade",
+          "rotulo": "Modalidade de preço",
+          "tipo": "enum",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "opcoes": [
+            "Preço global (empreitada global)",
+            "Por medição / por etapa"
+          ],
+          "default": "Por medição / por etapa"
+        },
+        {
+          "chave": "obra.exige_projeto",
+          "rotulo": "Obra exige projeto, ART/RRT ou alvará?",
+          "tipo": "booleano",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": false
+        },
+        {
+          "chave": "obra.etapas",
+          "rotulo": "Etapas e datas (se por medição)",
+          "tipo": "texto_longo",
+          "obrigatorio": false,
+          "editavel_pelo_usuario": true
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "obra_execucao",
+          "titulo": "DA EXECUÇÃO DA OBRA",
+          "paragrafos": [
+            "A obra será executada na modalidade {{obra.modalidade}}, conforme as etapas: {{obra.etapas}}. Em obra por medição, cada etapa concluída será verificada e paga conforme as condições de pagamento.",
+            "Os materiais serão fornecidos por: {{obra.materiais_por_conta}}. O CONTRATADO deverá informar, com antecedência razoável, a necessidade de compra de materiais, cabendo ao CONTRATANTE fornecê-los em quantidade e qualidade adequadas quando lhe couber.",
+            "O CONTRATADO removerá ou destinará adequadamente o entulho gerado por suas atividades, na forma da legislação, salvo ajuste em contrário, sendo o custo de caçambas e transporte por conta de {{obra.materiais_por_conta}}."
+          ],
+          "base_legal": [
+            "CC, art. 610",
+            "CC, art. 614 (recebimento por partes)",
+            "CONAMA 307/2002"
+          ]
+        },
+        {
+          "id": "obra_projeto",
+          "titulo": "DO PROJETO, DAS LICENÇAS E DA RESPONSABILIDADE TÉCNICA",
+          "paragrafos": [
+            "Quando a obra exigir projeto, alvará, licença municipal, anuência de condomínio ou responsabilidade técnica (ART/RRT) de engenheiro ou arquiteto, tais providências competirão ao CONTRATANTE, salvo se expressamente assumidas pelo CONTRATADO, e o início dos trabalhos dependerá delas.",
+            "O CONTRATADO não assume responsabilidade por projeto, cálculo estrutural ou instalações que não lhe tenham sido encomendados."
+          ],
+          "base_legal": [
+            "Lei 6.496/77",
+            "Lei 12.378/2010",
+            "CC, art. 618 (responsabilidade do empreiteiro por solidez e segurança)"
+          ]
+        },
+        {
+          "id": "obra_garantia",
+          "titulo": "DA RESPONSABILIDADE PELA SOLIDEZ E SEGURANÇA",
+          "paragrafos": [
+            "Em se tratando de edifícios ou construções consideráveis, o CONTRATADO responde, nos termos da lei, pela solidez e segurança do trabalho, tanto em razão dos materiais como do solo, pelo prazo de 5 (cinco) anos, contados da entrega, sem prejuízo do prazo decadencial de 180 dias para propor ação contra ele a partir do aparecimento do vício ou defeito.",
+            "A responsabilidade não abrange danos causados por uso indevido, alterações por terceiros, ausência de manutenção ou materiais fornecidos pelo CONTRATANTE contra recomendação escrita do CONTRATADO."
+          ],
+          "base_legal": [
+            "CC, art. 618 e parágrafo único"
+          ]
+        },
+        {
+          "id": "obra_seguranca",
+          "titulo": "DA SEGURANÇA NO CANTEIRO",
+          "paragrafos": [
+            "As partes observarão as normas de segurança aplicáveis, em especial a NR-18, cabendo ao CONTRATANTE garantir acesso seguro ao local e ao CONTRATADO utilizar os EPIs necessários."
+          ],
+          "base_legal": [
+            "NR-18"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "marceneiro",
+      "nome": "Marceneiro",
+      "icone": "🪚",
+      "tipo_contratual": "empreitada",
+      "base_legal_principal": [
+        "CC arts. 610-626 (empreitada)",
+        "CC art. 623 (desistência)",
+        "CDC arts. 18 e 26"
+      ],
+      "titulo_documento": "CONTRATO DE EMPREITADA (PRESTAÇÃO DE SERVIÇOS COM OBRA) – MARCENEIRO",
+      "sugestao_descricao_servico": "Móveis sob medida ou reparos em madeira (especificar peças, dimensões, material e acabamento).",
+      "campos_especificos": [
+        {
+          "chave": "marc.projeto_ref",
+          "rotulo": "Projeto / desenho aprovado (referência)",
+          "tipo": "texto",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "marc.material",
+          "rotulo": "Material e acabamento",
+          "tipo": "texto",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "marc.prazo_producao_dias",
+          "rotulo": "Prazo de produção (dias úteis)",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "marc.inclui_montagem",
+          "rotulo": "Inclui montagem e instalação?",
+          "tipo": "booleano",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": true
+        },
+        {
+          "chave": "marc.sinal_percentual",
+          "rotulo": "Sinal para compra de materiais (%)",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": 50
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "marc_projeto",
+          "titulo": "DO PROJETO E DAS MEDIDAS",
+          "paragrafos": [
+            "Os móveis serão produzidos conforme o projeto/desenho aprovado pelo CONTRATANTE ({{marc.projeto_ref}}), no material e acabamento {{marc.material}}. As medidas serão conferidas no local pelo CONTRATADO, e o CONTRATANTE deverá garantir que o ambiente esteja livre e nivelado para medição e instalação.",
+            "Alterações no projeto após aprovação poderão implicar novo orçamento e prazo. Após o início da produção, móveis sob medida personalizados não podem ser trocados por mera liberalidade, ressalvados os direitos previstos em lei."
+          ],
+          "base_legal": [
+            "CC, art. 619",
+            "CDC, arts. 18 e 20 (vícios)"
+          ]
+        },
+        {
+          "id": "marc_prazo_sinal",
+          "titulo": "DO PRAZO DE PRODUÇÃO E DO SINAL",
+          "paragrafos": [
+            "O prazo de produção é de {{marc.prazo_producao_dias}} dias úteis, contados da confirmação do pagamento do sinal de {{marc.sinal_percentual}}% e da aprovação final do projeto. A instalação {{marc.inclui_montagem ? 'está incluída' : 'NÃO está incluída'}} no valor total.",
+            "O sinal destina-se à aquisição de materiais e ao início da produção."
+          ],
+          "base_legal": [
+            "CC, art. 417 (sinal e arras)"
+          ]
+        },
+        {
+          "id": "marc_desistencia",
+          "titulo": "DA DESISTÊNCIA",
+          "paragrafos": [
+            "Em caso de desistência do CONTRATANTE após o início da produção, serão devidos ao CONTRATADO os materiais adquiridos, o trabalho já executado e, se cabível, lucros cessantes razoáveis, abatido o sinal pago. Materiais e peças produzidas ficarão à disposição do CONTRATANTE mediante pagamento."
+          ],
+          "base_legal": [
+            "CC, art. 623"
+          ]
+        },
+        {
+          "id": "marc_natureza",
+          "titulo": "DA NATUREZA DOS MATERIAIS",
+          "paragrafos": [
+            "Por ser a madeira material natural, variações de cor, veios e textura são características do material e não constituem defeito. Pequenas dilatações por umidade são esperadas, devendo o CONTRATANTE seguir as orientações de conservação entregues no ato da instalação."
+          ],
+          "base_legal": [
+            "CDC, art. 8º (informação adequada)"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "tecnico_manutencao",
+      "nome": "Técnico / Manutenção",
+      "icone": "🔧",
+      "tipo_contratual": "prestacao_servicos",
+      "base_legal_principal": [
+        "CC arts. 593-609",
+        "CDC arts. 21, 26, 40 e 49",
+        "CC arts. 627 e ss. (depósito, equipamento em oficina)"
+      ],
+      "titulo_documento": "CONTRATO DE PRESTAÇÃO DE SERVIÇOS – TÉCNICO / MANUTENÇÃO",
+      "sugestao_descricao_servico": "Assistência técnica / manutenção (especificar equipamento, defeito e serviço a realizar).",
+      "campos_especificos": [
+        {
+          "chave": "man.equipamento",
+          "rotulo": "Equipamento / item (marca, modelo, nº de série)",
+          "tipo": "texto",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "man.defeito",
+          "rotulo": "Defeito relatado pelo CONTRATANTE",
+          "tipo": "texto_longo",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "man.local",
+          "rotulo": "Reparo no local do CONTRATANTE ou na oficina?",
+          "tipo": "enum",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "opcoes": [
+            "No local",
+            "Na oficina"
+          ],
+          "default": "No local"
+        },
+        {
+          "chave": "man.validade_orcamento_dias",
+          "rotulo": "Validade do orçamento (dias)",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": 10
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "man_diagnostico",
+          "titulo": "DO DIAGNÓSTICO, DO ORÇAMENTO E DAS PEÇAS",
+          "paragrafos": [
+            "O serviço consiste em avaliar e reparar o equipamento {{man.equipamento}}, com defeito relatado: {{man.defeito}}. O serviço será executado {{man.local}}.",
+            "O valor contratado refere-se ao serviço descrito. Se, durante a execução, constatar-se necessidade de peças ou serviços adicionais, o CONTRATADO emitirá orçamento complementar, que dependerá de aprovação expressa. O orçamento tem validade de {{man.validade_orcamento_dias}} dias.",
+            "Na reposição de peças serão empregados componentes originais, novos ou que mantenham as especificações do fabricante, salvo autorização em contrário do CONTRATANTE. As peças substituídas poderão ser devolvidas ao CONTRATANTE a pedido."
+          ],
+          "base_legal": [
+            "CDC, art. 21",
+            "CDC, art. 40 (orçamento e validade)"
+          ]
+        },
+        {
+          "id": "man_oficina",
+          "titulo": "DO EQUIPAMENTO DEIXADO EM OFICINA",
+          "paragrafos": [
+            "Quando o equipamento for deixado na oficina, o CONTRATADO responderá por sua guarda e conservação até a entrega, nos termos da lei. O CONTRATANTE deverá retirá-lo em até 30 dias após ser comunicado da conclusão do serviço; transcorridos 90 dias sem retirada e sem contato, o CONTRATADO poderá adotar as providências legais para cobrar o valor devido e dar destinação ao bem, após notificação."
+          ],
+          "base_legal": [
+            "CC, arts. 627-652 (depósito)",
+            "CC, art. 1.275 e ss. (perda da propriedade por abandono)"
+          ],
+          "condicao": "man.local == 'Na oficina'"
+        },
+        {
+          "id": "man_dados",
+          "titulo": "DA SEGURANÇA DE DADOS E DA GARANTIA",
+          "paragrafos": [
+            "Em equipamento que armazene dados (computadores, celulares, etc.), o CONTRATANTE é responsável por realizar cópia de segurança antes da entrega, e o CONTRATADO não acessará conteúdos pessoais além do estritamente necessário ao diagnóstico, nos termos da LGPD.",
+            "A garantia do serviço incide sobre o defeito reparado e as peças substituídas, não cobrindo novos defeitos sem relação com o reparo, mau uso, quedas, contato com líquidos ou intervenção de terceiros."
+          ],
+          "base_legal": [
+            "LGPD, art. 6º",
+            "CDC, art. 26, II"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "freelancer",
+      "nome": "Freelancer",
+      "icone": "💻",
+      "tipo_contratual": "prestacao_servicos",
+      "base_legal_principal": [
+        "CC arts. 593-609",
+        "Lei 9.609/98 (software)",
+        "Lei 9.610/98 (direitos autorais)",
+        "CLT arts. 2º e 3º",
+        "LGPD"
+      ],
+      "titulo_documento": "CONTRATO DE PRESTAÇÃO DE SERVIÇOS – FREELANCER",
+      "sugestao_descricao_servico": "Projeto digital (site, app, sistema, automação etc.; especificar funcionalidades, plataformas e entregas).",
+      "campos_especificos": [
+        {
+          "chave": "free.entregaveis",
+          "rotulo": "Entregáveis",
+          "tipo": "texto_longo",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "free.revisoes_incluidas",
+          "rotulo": "Rodadas de revisão incluídas",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": 2
+        },
+        {
+          "chave": "free.prazo_aceite_dias",
+          "rotulo": "Prazo para aprovação de cada entrega (dias)",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": 5
+        },
+        {
+          "chave": "free.cessao_direitos",
+          "rotulo": "Tipo de direito concedido",
+          "tipo": "enum",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "opcoes": [
+            "Cessão total após pagamento integral",
+            "Licença de uso"
+          ],
+          "default": "Cessão total após pagamento integral"
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "free_entregaveis",
+          "titulo": "DOS ENTREGÁVEIS, DAS REVISÕES E DA APROVAÇÃO",
+          "paragrafos": [
+            "O CONTRATADO entregará: {{free.entregaveis}}. Estão incluídas {{free.revisoes_incluidas}} rodada(s) de revisão por entrega; revisões adicionais ou alterações de escopo serão orçadas à parte.",
+            "O CONTRATANTE terá {{free.prazo_aceite_dias}} dia(s) para aprovar ou solicitar ajustes por escrito em cada entrega, considerando-se aprovada a entrega sem manifestação nesse prazo. O cronograma depende do fornecimento tempestivo de conteúdos, acessos e feedbacks pelo CONTRATANTE."
+          ],
+          "base_legal": [
+            "CC, arts. 113 e 422 (boa-fé e interpretação)"
+          ]
+        },
+        {
+          "id": "free_pi",
+          "titulo": "DA PROPRIEDADE INTELECTUAL",
+          "paragrafos": [
+            "Tipo de direito: {{free.cessao_direitos}}. Havendo cessão, esta só produz efeitos após a quitação integral do valor contratado, abrangendo as entregas finais aprovadas, excluídos componentes, bibliotecas, frameworks e ferramentas preexistentes do CONTRATADO ou de terceiros, sujeitos às suas respectivas licenças.",
+            "O CONTRATADO poderá citar o projeto em seu portfólio, sem divulgar informações confidenciais, salvo vedação escrita do CONTRATANTE.",
+            "As partes manterão sigilo sobre informações confidenciais que venham a receber, por prazo de 2 (dois) anos após o término do contrato."
+          ],
+          "base_legal": [
+            "Lei 9.610/98, arts. 27, 49 e 50 (cessão por escrito)",
+            "Lei 9.609/98, art. 4º (programa de computador)"
+          ]
+        },
+        {
+          "id": "free_acessos",
+          "titulo": "DOS ACESSOS E DA AUTONOMIA",
+          "paragrafos": [
+            "O CONTRATANTE fornecerá os acessos e credenciais necessários, que serão usados apenas para a execução do projeto. O CONTRATADO poderá, sob sua responsabilidade, valer-se de auxiliares e de ferramentas próprias, definindo horários e métodos de trabalho, sem subordinação ao CONTRATANTE."
+          ],
+          "base_legal": [
+            "CLT, arts. 2º e 3º",
+            "LGPD, art. 39 (operador)"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "designer",
+      "nome": "Designer",
+      "icone": "🖌️",
+      "tipo_contratual": "prestacao_servicos",
+      "base_legal_principal": [
+        "CC arts. 593-609",
+        "Lei 9.610/98 (arts. 27, 29, 49 e 50)",
+        "Lei 9.279/96 (propriedade industrial)"
+      ],
+      "titulo_documento": "CONTRATO DE PRESTAÇÃO DE SERVIÇOS – DESIGNER",
+      "sugestao_descricao_servico": "Criação de identidade visual / material gráfico (especificar peças, formatos e rodadas de alteração).",
+      "campos_especificos": [
+        {
+          "chave": "des.entregaveis",
+          "rotulo": "Peças / entregáveis",
+          "tipo": "texto_longo",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "des.rodadas_alteracao",
+          "rotulo": "Rodadas de alteração incluídas",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": 3
+        },
+        {
+          "chave": "des.formatos",
+          "rotulo": "Formatos de entrega",
+          "tipo": "texto",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": "PNG, JPG e PDF"
+        },
+        {
+          "chave": "des.arquivos_abertos",
+          "rotulo": "Entrega de arquivos editáveis?",
+          "tipo": "booleano",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": false
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "des_escopo",
+          "titulo": "DO ESCOPO CRIATIVO E DAS ALTERAÇÕES",
+          "paragrafos": [
+            "O CONTRATADO criará e entregará: {{des.entregaveis}}, nos formatos {{des.formatos}}. Estão incluídas {{des.rodadas_alteracao}} rodada(s) de alteração sobre a proposta escolhida; solicitações de novo conceito ou de nova direção criativa configuram novo escopo e serão orçadas à parte.",
+            "Os arquivos editáveis (abertos) {{des.arquivos_abertos ? 'serão entregues' : 'NÃO estão incluídos e só serão fornecidos mediante ajuste escrito'}}."
+          ],
+          "base_legal": [
+            "CC, art. 594"
+          ]
+        },
+        {
+          "id": "des_direitos",
+          "titulo": "DOS DIREITOS AUTORAIS E DO USO",
+          "paragrafos": [
+            "Com o pagamento integral do valor contratado, o CONTRATADO cede ao CONTRATANTE, de forma não exclusiva em relação ao portfólio do CONTRATADO e exclusiva para o uso comercial da peça final aprovada, os direitos patrimoniais sobre as criações entregues, para os fins e mídias descritos neste contrato. Usos não previstos dependem de nova autorização. Criações apresentadas e não escolhidas permanecem de titularidade do CONTRATADO.",
+            "Permanecem com o CONTRATADO os direitos morais do autor, como o de ser reconhecido como criador da obra, e o direito de exibi-la em portfólio, salvo sigilo ajustado por escrito."
+          ],
+          "base_legal": [
+            "Lei 9.610/98, art. 27 (direitos morais inalienáveis)",
+            "Lei 9.610/98, art. 49 (cessão interpretada restritivamente)",
+            "Lei 9.610/98, art. 50 (cessão por escrito)"
+          ]
+        },
+        {
+          "id": "des_terceiros",
+          "titulo": "DE ELEMENTOS DE TERCEIROS E DE REGISTRO DE MARCA",
+          "paragrafos": [
+            "Fontes, imagens, ícones e outros elementos de terceiros serão utilizados com base em licenças adequadas, cuja aquisição, quando paga, será por conta do CONTRATANTE, mediante prévia aprovação.",
+            "O registro de marca, desenho industrial ou nome de domínio perante o INPI ou órgão competente, bem como a pesquisa de anterioridade, não estão incluídos neste contrato, sendo responsabilidade do CONTRATANTE, e o CONTRATADO não garante a registrabilidade da criação."
+          ],
+          "base_legal": [
+            "Lei 9.279/96 (registro no INPI)",
+            "Lei 9.610/98"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "social_media",
+      "nome": "Social Media",
+      "icone": "📱",
+      "tipo_contratual": "prestacao_servicos",
+      "base_legal_principal": [
+        "CC arts. 593-609",
+        "Lei 9.610/98",
+        "Lei 12.965/2014 (Marco Civil)",
+        "CDC arts. 36 e 37 (publicidade)",
+        "LGPD"
+      ],
+      "titulo_documento": "CONTRATO DE PRESTAÇÃO DE SERVIÇOS – SOCIAL MEDIA",
+      "sugestao_descricao_servico": "Gestão de redes sociais (especificar plataformas, frequência, tipo de conteúdo e relatórios).",
+      "campos_especificos": [
+        {
+          "chave": "sm.plataformas",
+          "rotulo": "Plataformas (Instagram, TikTok, etc.)",
+          "tipo": "texto",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "sm.qtd_posts_mes",
+          "rotulo": "Conteúdos por mês",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "sm.vigencia_meses",
+          "rotulo": "Vigência (meses)",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": 3
+        },
+        {
+          "chave": "sm.verba_trafego",
+          "rotulo": "Verba de tráfego pago por conta do CONTRATANTE (R$/mês)",
+          "tipo": "moeda",
+          "obrigatorio": false,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "sm.prazo_aprovacao_horas",
+          "rotulo": "Prazo de aprovação de conteúdos (horas)",
+          "tipo": "numero",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "default": 48
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "sm_escopo",
+          "titulo": "DO ESCOPO MENSAL E DA APROVAÇÃO",
+          "paragrafos": [
+            "O CONTRATADO realizará a gestão de conteúdo nas plataformas {{sm.plataformas}}, com produção de {{sm.qtd_posts_mes}} conteúdo(s) por mês, pelo prazo de {{sm.vigencia_meses}} mês(es), com relatório mensal de desempenho.",
+            "Os conteúdos serão enviados previamente para aprovação do CONTRATANTE, que terá {{sm.prazo_aprovacao_horas}} horas para aprová-los ou solicitar ajustes; na ausência de manifestação, o CONTRATADO poderá publicar o conteúdo conforme o cronograma, respeitando o prazo contratado."
+          ],
+          "base_legal": [
+            "CC, art. 594"
+          ]
+        },
+        {
+          "id": "sm_meio",
+          "titulo": "DA OBRIGAÇÃO DE MEIO E DO TRÁFEGO PAGO",
+          "paragrafos": [
+            "O CONTRATADO obriga-se a empregar seus melhores esforços e técnicas, não garantindo resultados específicos (como número de seguidores, engajamento, leads ou vendas), que dependem de fatores externos, como algoritmos e comportamento do público.",
+            "Investimentos em anúncios pagos (verba de mídia) não estão incluídos nos honorários e serão pagos diretamente pelo CONTRATANTE às plataformas, no valor aproximado de R$ {{sm.verba_trafego}} por mês, quando houver."
+          ],
+          "base_legal": [
+            "Natureza de obrigação de meio (CC, art. 389)"
+          ]
+        },
+        {
+          "id": "sm_contas",
+          "titulo": "DAS CONTAS, DO CONTEÚDO E DOS DIREITOS",
+          "paragrafos": [
+            "As contas e perfis são de titularidade exclusiva do CONTRATANTE, que fornecerá os acessos necessários; ao término do contrato, o CONTRATADO restituirá e cessará o uso de todas as credenciais.",
+            "O CONTRATANTE é responsável pelas informações, marcas e produtos divulgados, bem como pelas autorizações de uso de imagem de terceiros fornecidas por ele, e declara ter direito de uso de materiais que disponibilizar. O CONTRATADO é responsável pela originalidade do conteúdo que produzir e observará as normas de publicidade aplicáveis.",
+            "Os direitos patrimoniais sobre o conteúdo produzido são cedidos ao CONTRATANTE, para uso nas plataformas ajustadas, com o pagamento integral dos honorários do mês correspondente."
+          ],
+          "base_legal": [
+            "Lei 9.610/98, arts. 29 e 49",
+            "CDC, arts. 36 e 37",
+            "Lei 12.965/2014"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "prestador_geral",
+      "nome": "Prestador de serviços gerais",
+      "icone": "🧰",
+      "tipo_contratual": "prestacao_servicos",
+      "base_legal_principal": [
+        "CC arts. 593-609",
+        "CDC (quando houver relação de consumo)"
+      ],
+      "titulo_documento": "CONTRATO DE PRESTAÇÃO DE SERVIÇOS – PRESTADOR DE SERVIÇOS GERAIS",
+      "sugestao_descricao_servico": "Serviço sob demanda (especificar atividade, local, frequência e materiais).",
+      "campos_especificos": [
+        {
+          "chave": "geral.tipo_servico",
+          "rotulo": "Tipo de serviço",
+          "tipo": "texto",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "geral.materiais",
+          "rotulo": "Materiais por conta de",
+          "tipo": "enum",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true,
+          "opcoes": [
+            "CONTRATANTE",
+            "CONTRATADO"
+          ],
+          "default": "CONTRATANTE"
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "geral_escopo",
+          "titulo": "DO SERVIÇO E DOS MATERIAIS",
+          "paragrafos": [
+            "Os serviços de {{geral.tipo_servico}} serão executados conforme descrito neste contrato. Os materiais e equipamentos necessários serão fornecidos por: {{geral.materiais}}.",
+            "Serviços extras serão orçados à parte e dependem de autorização do CONTRATANTE."
+          ],
+          "base_legal": [
+            "CC, art. 594",
+            "CDC, art. 40"
+          ]
+        }
+      ]
+    },
+    {
+      "nicho_id": "outro",
+      "nome": "Outro",
+      "icone": "➕",
+      "tipo_contratual": "prestacao_servicos",
+      "base_legal_principal": [
+        "CC arts. 593-609",
+        "CDC (quando houver relação de consumo)"
+      ],
+      "titulo_documento": "CONTRATO DE PRESTAÇÃO DE SERVIÇOS – OUTRO",
+      "sugestao_descricao_servico": "Serviço personalizado (descrever detalhadamente escopo, entregas e condições).",
+      "campos_especificos": [
+        {
+          "chave": "outro.profissao",
+          "rotulo": "Profissão / atividade",
+          "tipo": "texto",
+          "obrigatorio": true,
+          "editavel_pelo_usuario": true
+        },
+        {
+          "chave": "outro.obs",
+          "rotulo": "Condições especiais",
+          "tipo": "texto_longo",
+          "obrigatorio": false,
+          "editavel_pelo_usuario": true
+        }
+      ],
+      "clausulas_especificas": [
+        {
+          "id": "outro_condicoes",
+          "titulo": "DAS CONDIÇÕES ESPECIAIS",
+          "paragrafos": [
+            "Os serviços de {{outro.profissao}} serão prestados nos termos descritos neste instrumento.",
+            "Condições especiais acordadas entre as partes: {{outro.obs}}."
+          ],
+          "base_legal": [
+            "CC, art. 421 (liberdade contratual)"
+          ]
+        }
+      ]
+    }
+  ]
+}

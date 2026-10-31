@@ -1,0 +1,142 @@
+<app-header titulo="Clientes" subtitulo="Organize quem você atende."></app-header>
+
+<main class="page">
+  <div class="page-head">
+    <div>
+      <h2>Clientes</h2>
+      <p class="sub">{{ listaFiltrada.length }} cliente(s) encontrado(s)</p>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="abrirNovo()">+ Novo cliente</button>
+  </div>
+
+  @if (erro) {
+    <div class="alert alert-danger mb-24"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  <div class="filters">
+    <div class="search">
+      <span class="search-icon">🔎</span>
+      <input class="input" type="text" [(ngModel)]="busca" [ngModelOptions]="{ standalone: true }" placeholder="Buscar por nome, telefone ou e-mail...">
+    </div>
+    <button class="chip" [class.active]="statusFiltro === 'todos'" type="button" (click)="statusFiltro = 'todos'">Todos</button>
+    <button class="chip" [class.active]="statusFiltro === 'ativo'" type="button" (click)="statusFiltro = 'ativo'">Ativos</button>
+    <button class="chip" [class.active]="statusFiltro === 'inativo'" type="button" (click)="statusFiltro = 'inativo'">Inativos</button>
+  </div>
+
+  <section class="card">
+    <div class="table-wrap">
+      @if (listaFiltrada.length) {
+        <table class="table">
+          <thead>
+            <tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            @for (c of listaFiltrada; track c.id) {
+              <tr class="clickable">
+                <td><div class="cell-person"><span class="avatar">{{ c.nome.slice(0,2).toUpperCase() }}</span><div><strong>{{ c.nome }}</strong></div></div></td>
+                <td>{{ c.telefone || '—' }}</td>
+                <td>{{ c.email || '—' }}</td>
+                <td><span class="badge" [ngClass]="c.status === 'ativo' ? 'badge-success' : 'badge-neutral'">{{ c.status === 'ativo' ? 'Ativo' : 'Inativo' }}</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button class="row-action" type="button" title="Editar" (click)="abrirEdicao(c)">✏️</button>
+                    <button class="row-action" type="button" title="Excluir" (click)="pedirExclusao(c)">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else if (!carregando) {
+        <div class="empty">
+          <span class="empty-icon">👥</span>
+          <h4>Nenhum cliente encontrado</h4>
+          <p>Cadastre o primeiro cliente para começar a criar orçamentos.</p>
+        </div>
+      }
+    </div>
+  </section>
+</main>
+
+@if (modalAberto()) {
+  <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div>
+          <h3>{{ editandoId ? 'Editar cliente' : 'Novo cliente' }}</h3>
+          <p class="sub">{{ editandoId ? 'Atualize os dados do cliente.' : 'Preencha os dados para cadastrar.' }}</p>
+        </div>
+        <button class="modal-close" type="button" (click)="fecharModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label>Nome completo <span class="req">*</span></label>
+              <input class="input" formControlName="nome" placeholder="Ex.: Ana Beatriz Ramos">
+              @if (form.get('nome')?.invalid && form.get('nome')?.touched) { <span class="field-error">Campo obrigatório.</span> }
+            </div>
+            <div class="field">
+              <label>Telefone <span class="req">*</span></label>
+              <input class="input" formControlName="telefone" placeholder="(11) 90000-0000">
+              @if (form.get('telefone')?.invalid && form.get('telefone')?.touched) { <span class="field-error">Campo obrigatório.</span> }
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>E-mail</label>
+              <input class="input" type="email" formControlName="email" placeholder="cliente@email.com">
+              @if (form.get('email')?.invalid && form.get('email')?.touched) { <span class="field-error">E-mail inválido.</span> }
+            </div>
+            <div class="field">
+              <label>CPF/CNPJ</label>
+              <input class="input" formControlName="documento" placeholder="000.000.000-00">
+            </div>
+          </div>
+          <div class="field">
+            <label>Endereço</label>
+            <input class="input" formControlName="endereco" placeholder="Rua, número — bairro, cidade">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Status</label>
+              <select class="select" formControlName="status">
+                <option value="ativo">Ativo</option>
+                <option value="inativo">Inativo</option>
+              </select>
+            </div>
+            <div class="field"></div>
+          </div>
+          <div class="field">
+            <label>Observações</label>
+            <textarea class="textarea" formControlName="observacoes" placeholder="Preferências, indicação, detalhes de acesso..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" type="button" (click)="fecharModal()">Cancelar</button>
+        <button class="btn btn-primary" type="button" [disabled]="salvando" (click)="salvar()">
+          {{ salvando ? 'Salvando...' : (editandoId ? 'Salvar alterações' : 'Cadastrar cliente') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (excluirAberto()) {
+  <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <div><h3>Excluir cliente</h3><p class="sub">Esta ação não pode ser desfeita.</p></div>
+        <button class="modal-close" type="button" (click)="excluirAberto.set(false)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="small">Tem certeza de que deseja excluir <strong>{{ clienteParaExcluir?.nome }}</strong>?</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" type="button" (click)="excluirAberto.set(false)">Cancelar</button>
+        <button class="btn btn-danger" type="button" (click)="confirmarExclusao()">Excluir cliente</button>
+      </div>
+    </div>
+  </div>
+}

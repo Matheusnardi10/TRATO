@@ -1,0 +1,62 @@
+<app-header titulo="Serviços" subtitulo="Acompanhe o andamento e a lucratividade de cada trabalho."></app-header>
+
+<main class="page">
+  <div class="page-head">
+    <div>
+      <h2>Serviços</h2>
+      <p class="sub">{{ listaFiltrada.length }} serviço(s) encontrado(s)</p>
+    </div>
+  </div>
+
+  @if (erro) {
+    <div class="alert alert-danger mb-24"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  <div class="filters">
+    <div class="search">
+      <span class="search-icon">🔎</span>
+      <input class="input" type="text" [(ngModel)]="busca" [ngModelOptions]="{ standalone: true }" placeholder="Buscar por título, cliente ou número...">
+    </div>
+    <button class="chip" [class.active]="statusFiltro === 'todos'" type="button" (click)="filtrar('todos')">Todos</button>
+    <button class="chip" [class.active]="statusFiltro === 'agendado'" type="button" (click)="filtrar('agendado')">Agendados</button>
+    <button class="chip" [class.active]="statusFiltro === 'em_andamento'" type="button" (click)="filtrar('em_andamento')">Em andamento</button>
+    <button class="chip" [class.active]="statusFiltro === 'concluido'" type="button" (click)="filtrar('concluido')">Concluídos</button>
+    <button class="chip" [class.active]="statusFiltro === 'cancelado'" type="button" (click)="filtrar('cancelado')">Cancelados</button>
+  </div>
+
+  <section class="card">
+    <div class="table-wrap">
+      @if (listaFiltrada.length) {
+        <table class="table">
+          <thead>
+            <tr><th>Serviço</th><th>Data</th><th class="num">Valor</th><th class="num">Custo previsto</th><th class="num">Custo real</th><th class="num">Lucro</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            @for (s of listaFiltrada; track s.id) {
+              <tr class="clickable" [routerLink]="['/app/servicos', s.id]">
+                <td>
+                  <div class="cell-person">
+                    <span class="avatar">{{ iniciais(s.clienteNome) }}</span>
+                    <div><strong>{{ s.titulo }}</strong><span>{{ s.clienteNome }} · <span class="mono">#{{ s.numero }}</span></span></div>
+                  </div>
+                </td>
+                <td class="small">{{ formatDate(s.data) }} {{ s.hora }}</td>
+                <td class="num">{{ formatBRL(s.valor) }}</td>
+                <td class="num">{{ formatBRL(s.custoPrevisto) }}</td>
+                <td class="num">{{ formatBRL(s.custoReal) }}</td>
+                <td class="num" [class.pos]="lucro(s) >= 0" [class.neg]="lucro(s) < 0">{{ formatBRL(lucro(s)) }}</td>
+                <td><span class="badge" [ngClass]="statusMap[s.status]?.classe">{{ statusMap[s.status]?.label || s.status }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else if (!carregando) {
+        <div class="empty">
+          <span class="empty-icon">🔨</span>
+          <h4>Nenhum serviço encontrado</h4>
+          <p>Serviços nascem de um orçamento aprovado ou de um contrato ativo.</p>
+        </div>
+      }
+    </div>
+  </section>
+</main>

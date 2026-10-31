@@ -1,0 +1,94 @@
+<div class="pub-wrap">
+  <div class="pub-nav">Trato</div>
+
+  @if (carregando) {
+    <div class="pub-status"><p class="sub">Carregando contrato...</p></div>
+  } @else if (erro || !contrato) {
+    <div class="pub-status">
+      <span class="emoji">🚫</span>
+      <h3>Contrato não encontrado</h3>
+      <p class="sub">{{ erro }}</p>
+    </div>
+  } @else {
+    @if (aprovado) {
+      <div class="alert alert-success mb-16">
+        <span class="alert-icon">✅</span>
+        <div>
+          <strong>Contrato aprovado{{ contrato.aprovadoEm ? ' em ' + formatDateTime(contrato.aprovadoEm) : '' }}.</strong>
+          {{ contrato.profissionalNome }} já foi avisado(a). Guarde este link para consultar o contrato quando quiser.
+        </div>
+      </div>
+    } @else if (contrato.status === 'cancelado' || contrato.status === 'rascunho') {
+      <div class="alert alert-warning mb-16">
+        <span class="alert-icon">⚠️</span>
+        <div>Este contrato não está disponível para aprovação no momento. Fale com {{ contrato.profissionalNome }}.</div>
+      </div>
+    } @else {
+      <p>Olá, <strong>{{ contrato.clienteNome }}</strong>! {{ contrato.profissionalNome }} enviou este contrato para você.
+        Leia com atenção e, se estiver de acordo, aprove no final da página.</p>
+    }
+
+    <div class="doc mt-16">
+      <div class="doc-head">
+        <div class="doc-brand"><span class="doc-brand-name">{{ contrato.profissionalNome }}</span><span class="doc-brand-sub">{{ contrato.titulo }}</span></div>
+        <div class="doc-meta">
+          <span class="doc-numero">Contrato #{{ contrato.numero }}</span>
+          Valor: {{ formatBRL(contrato.valorTotal) }}
+        </div>
+      </div>
+
+      @if (contrato.tituloDocumento) {
+        <h3 style="text-align:center; margin:16px 0">{{ contrato.tituloDocumento }}</h3>
+      }
+      @for (p of paragrafos(contrato.cabecalho); track $index) {
+        <p style="text-align:justify">{{ p }}</p>
+      }
+
+      @for (cl of contrato.clausulas; track cl.id) {
+        <div class="doc-clause">
+          <h4>CLÁUSULA {{ cl.numero }}ª – {{ cl.titulo }}</h4>
+          @for (p of paragrafos(cl.texto); track $index) {
+            <p style="text-align:justify">{{ p }}</p>
+          }
+        </div>
+      }
+
+      @if (contrato.aditivos.length) {
+        <div class="doc-section">
+          <h4>Aditivos contratuais</h4>
+          @for (a of contrato.aditivos; track a.id) {
+            <div class="doc-clause">
+              <h4>Aditivo #{{ a.numero }} — {{ a.tipo }}</h4>
+              <p>{{ a.descricao }}</p>
+              @if (a.valor) { <p>Valor: {{ formatBRL(a.valor) }}</p> }
+              @if (a.condicoes) { <p>{{ a.condicoes }}</p> }
+              <p class="small">{{ formatDate(a.data) }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (contrato.assinatura) {
+        <p style="margin-top:24px">{{ contrato.assinatura }}</p>
+      }
+      @if (contrato.avisoLegal) {
+        <p class="doc-footer-note">{{ contrato.avisoLegal }}</p>
+      }
+    </div>
+
+    @if (contrato.status === 'aguardando') {
+      <label class="pub-check">
+        <input type="checkbox" [checked]="concordo" (change)="concordo = $any($event.target).checked">
+        <span>Li o contrato acima e concordo com todas as cláusulas, valores e condições.</span>
+      </label>
+      @if (erroAprovar) {
+        <div class="alert alert-danger mt-16"><span class="alert-icon">⛔</span><div>{{ erroAprovar }}</div></div>
+      }
+      <div class="pub-cta">
+        <button class="btn btn-primary" type="button" [disabled]="!concordo || aprovando" (click)="aprovar()">
+          {{ aprovando ? 'Registrando aprovação...' : '✅ Aprovar contrato' }}
+        </button>
+      </div>
+    }
+  }
+</div>

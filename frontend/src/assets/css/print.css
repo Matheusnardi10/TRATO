@@ -1,0 +1,99 @@
+/* ============================================================
+   TRATO — print.css
+   Usado nas páginas de orçamento e contrato ao clicar em
+   "Gerar PDF" (window.print — o navegador salva como PDF).
+   ============================================================ */
+
+.doc {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 40px 44px;
+}
+.doc-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--ink);
+}
+.doc-brand { display: flex; align-items: center; gap: 10px; }
+.doc-brand-name { font-family: var(--font-display); font-weight: 700; font-size: 18px; }
+.doc-brand-sub { font-size: 12px; color: var(--ink-3); }
+.doc-meta { text-align: right; font-size: 12.5px; color: var(--ink-2); }
+.doc-meta .doc-numero { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--ink); display: block; margin-bottom: 4px; }
+
+.doc-parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.doc-party h5 {
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 6px;
+}
+.doc-party p { margin: 0; font-size: 13.5px; line-height: 1.6; }
+
+.doc-section { margin-bottom: 22px; }
+.doc-section h4 {
+  font-size: 13px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--brand);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+.doc-section p { font-size: 14px; color: var(--ink-2); margin: 0 0 6px; }
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 24px;
+}
+.doc-grid .item { font-size: 13.5px; }
+.doc-grid .item span { display: block; font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+
+.doc-items { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.doc-items th, .doc-items td { padding: 9px 4px; border-bottom: 1px solid var(--line); text-align: left; }
+.doc-items th:last-child, .doc-items td:last-child { text-align: right; }
+.doc-items tfoot td { border-bottom: 0; border-top: 2px solid var(--ink); font-weight: 700; font-size: 15px; }
+
+.doc-clause { margin-bottom: 16px; }
+.doc-clause h4 { font-size: 13.5px; margin-bottom: 4px; }
+.doc-clause p, .doc-clause div { font-size: 13.5px; color: var(--ink-2); margin: 0; line-height: 1.6; }
+
+.doc-signature {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 46px;
+  text-align: center;
+}
+.doc-signature .line { border-top: 1px solid var(--ink); padding-top: 8px; font-size: 12.5px; }
+
+.doc-footer-note {
+  margin-top: 28px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  font-size: 11px;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+@media print {
+  #sidebar, #header, .no-print, .toast-wrap { display: none !important; }
+  .app { padding-left: 0 !important; }
+  body { background: #fff; }
+  .page { padding: 0 !important; max-width: none !important; }
+  .doc { border: 0; border-radius: 0; box-shadow: none; padding: 0; max-width: none; }
+  a[href]::after { content: ""; }
+}

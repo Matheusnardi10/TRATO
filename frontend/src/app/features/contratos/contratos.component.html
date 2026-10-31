@@ -1,0 +1,61 @@
+<app-header titulo="Contratos" subtitulo="Gerados a partir dos orçamentos aprovados."></app-header>
+
+<main class="page">
+  <div class="page-head">
+    <div>
+      <h2>Contratos</h2>
+      <p class="sub">{{ listaFiltrada.length }} contrato(s) encontrado(s)</p>
+    </div>
+    <a class="btn btn-primary" routerLink="/app/orcamentos">+ Gerar a partir de um orçamento</a>
+  </div>
+
+  @if (erro) {
+    <div class="alert alert-danger mb-24"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  <div class="filters">
+    <div class="search">
+      <span class="search-icon">🔎</span>
+      <input class="input" type="text" [(ngModel)]="busca" [ngModelOptions]="{ standalone: true }" placeholder="Buscar por título, cliente ou número...">
+    </div>
+    <button class="chip" [class.active]="statusFiltro === 'todos'" type="button" (click)="filtrar('todos')">Todos</button>
+    <button class="chip" [class.active]="statusFiltro === 'rascunho'" type="button" (click)="filtrar('rascunho')">Rascunho</button>
+    <button class="chip" [class.active]="statusFiltro === 'aguardando'" type="button" (click)="filtrar('aguardando')">Aguardando aceite</button>
+    <button class="chip" [class.active]="statusFiltro === 'ativo'" type="button" (click)="filtrar('ativo')">Ativos</button>
+    <button class="chip" [class.active]="statusFiltro === 'concluido'" type="button" (click)="filtrar('concluido')">Concluídos</button>
+  </div>
+
+  <section class="card">
+    <div class="table-wrap">
+      @if (listaFiltrada.length) {
+        <table class="table">
+          <thead>
+            <tr><th>Contrato</th><th>Cliente</th><th>Início</th><th class="num">Valor</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            @for (c of listaFiltrada; track c.id) {
+              <tr class="clickable" [routerLink]="['/app/contratos', c.id]">
+                <td><strong>{{ c.titulo }}</strong> <span class="mono small">#{{ c.numero }}</span></td>
+                <td>{{ c.clienteNome }}</td>
+                <td class="small">{{ formatDate(c.dataInicio) }}</td>
+                <td class="num">{{ formatBRL(c.valorTotal ?? c.valor) }}</td>
+                <td><span class="badge" [ngClass]="statusMap[c.status]?.classe">{{ statusMap[c.status]?.label || c.status }}</span></td>
+                <td>
+                  <div class="row-actions">
+                    <button class="row-action" type="button" title="Excluir" (click)="$event.stopPropagation(); excluir(c)">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else if (!carregando) {
+        <div class="empty">
+          <span class="empty-icon">📄</span>
+          <h4>Nenhum contrato encontrado</h4>
+          <p>Aprove um orçamento e gere o contrato a partir dele.</p>
+        </div>
+      }
+    </div>
+  </section>
+</main>

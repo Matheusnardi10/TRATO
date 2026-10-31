@@ -1,0 +1,230 @@
+<app-header titulo="Contrato" subtitulo="Cláusulas, aditivos e aceite."></app-header>
+
+<main class="page">
+  <a routerLink="/app/contratos" class="small no-print">&larr; Voltar para contratos</a>
+
+  @if (erro) {
+    <div class="alert alert-danger mt-16"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  @if (contrato) {
+    <div class="page-head mt-16 no-print">
+      <div>
+        <h2>{{ contrato.titulo }} <span class="mono small">#{{ contrato.numero }}</span></h2>
+        <p class="sub">{{ contrato.clienteNome }} · início em {{ formatDate(contrato.dataInicio) }}</p>
+      </div>
+      <div class="row-actions">
+        <span class="badge" [ngClass]="statusMap[contrato.status]?.classe">{{ statusMap[contrato.status]?.label }}</span>
+        @if (contrato.status === 'rascunho') {
+          <button class="btn btn-secondary" type="button" [disabled]="temPendencias || enviando" (click)="enviarParaAceite()">{{ enviando ? 'Enviando...' : '✉️ Enviar por e-mail' }}</button>
+        }
+        @if (contrato.status === 'aguardando') {
+          <button class="btn btn-secondary" type="button" [disabled]="enviando" (click)="enviarParaAceite()">{{ enviando ? 'Enviando...' : '✉️ Reenviar e-mail' }}</button>
+          @if (contrato.linkAceite) {
+            <button class="btn btn-secondary" type="button" (click)="copiarLink()">🔗 Copiar link</button>
+          }
+          <button class="btn btn-primary" type="button" [disabled]="temPendencias" (click)="marcarAceito()">Marcar como aceito</button>
+        }
+        @if (contrato.status === 'ativo') {
+          <button class="btn btn-primary" type="button" (click)="criarServico()">Criar serviço</button>
+          <button class="btn btn-secondary" type="button" (click)="concluir()">Concluir</button>
+        }
+        @if (contrato.status !== 'cancelado' && contrato.status !== 'concluido') {
+          <button class="btn btn-ghost" type="button" (click)="cancelar()">Cancelar</button>
+        }
+        <button class="btn btn-secondary" type="button" (click)="imprimir()">🖨️ Imprimir</button>
+      </div>
+    </div>
+
+    @if (contrato.status === 'aguardando' && contrato.enviadoEm) {
+      <div class="alert alert-info mt-16 no-print">
+        <span class="alert-icon">✉️</span>
+        <div>Enviado para <strong>{{ contrato.enviadoPara }}</strong> em {{ formatDateTime(contrato.enviadoEm) }}.
+          Assim que o cliente clicar em "Aprovar contrato" no link, ele fica ativo aqui automaticamente.</div>
+      </div>
+    }
+    @if (contrato.aprovadoEm) {
+      <div class="alert alert-success mt-16 no-print">
+        <span class="alert-icon">✅</span>
+        <div>Aprovado pelo cliente em {{ formatDateTime(contrato.aprovadoEm) }}, pelo link enviado por e-mail.</div>
+      </div>
+    }
+
+    @if (temPendencias && (contrato.status === 'rascunho' || contrato.status === 'aguardando')) {
+      <div class="alert alert-warning mt-16 no-print">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          <strong>Faltam dados para enviar o contrato:</strong>
+          <ul style="margin:6px 0 0 18px">
+            @for (p of contrato.pendentes; track p) { <li>{{ p }}</li> }
+          </ul>
+        </div>
+      </div>
+    }
+
+    @if (editavel && contrato.campos?.length) {
+      <div class="card mt-16 no-print">
+        <div class="card-head"><div><h3>Dados do contrato</h3>
+          <p class="sub">Preencha os campos abaixo — o texto do contrato é montado a partir deles. Salvar refaz as cláusulas (edições manuais no texto são substituídas).</p></div></div>
+        @for (grupo of [['contratante', 'Dados do contratante (cliente)'], ['contrato', 'Condições do contrato'], ['especifico', 'Detalhes do serviço']]; track grupo[0]) {
+          @if (camposDoGrupo(grupo[0]).length) {
+            <h4 class="mt-16">{{ grupo[1] }}</h4>
+            <div class="grid grid-2">
+              @for (campo of camposDoGrupo(grupo[0]); track campo.chave) {
+                <div class="field" [style.grid-column]="campo.tipo === 'texto_longo' ? '1 / -1' : null">
+                  <label>{{ campo.rotulo }} @if (campo.obrigatorio) { <span class="req">*</span> }</label>
+                  @if (campo.tipo === 'texto_longo') {
+                    <textarea class="textarea" rows="3" [(ngModel)]="valores[campo.chave]" [ngModelOptions]="{ standalone: true }"></textarea>
+                  } @else if (campo.tipo === 'enum') {
+                    <select class="select" [(ngModel)]="valores[campo.chave]" [ngModelOptions]="{ standalone: true }">
+                      <option value="">Selecione...</option>
+                      @for (o of campo.opcoes; track o) { <option [value]="o">{{ o }}</option> }
+                    </select>
+                  } @else if (campo.tipo === 'booleano') {
+                    <select class="select" [(ngModel)]="valores[campo.chave]" [ngModelOptions]="{ standalone: true }">
+                      <option value="">Não</option>
+                      <option value="true">Sim</option>
+                    </select>
+                  } @else {
+                    <input class="input" [type]="tipoInput(campo.tipo)" step="any" [(ngModel)]="valores[campo.chave]" [ngModelOptions]="{ standalone: true }">
+                  }
+                  @if (campo.pendente) { <span class="small" style="color:var(--danger, #c0392b)">Pendente</span> }
+                </div>
+              }
+            </div>
+          }
+        }
+        <div class="row-actions mt-16">
+          <button class="btn btn-primary" type="button" [disabled]="salvandoDados" (click)="salvarDados()">{{ salvandoDados ? 'Salvando...' : 'Salvar dados' }}</button>
+        </div>
+      </div>
+    }
+
+    <div class="doc">
+      <div class="doc-head">
+        <div class="doc-brand"><span class="doc-brand-name">Trato</span><span class="doc-brand-sub">Contrato de prestação de serviço</span></div>
+        <div class="doc-meta">
+          <span class="doc-numero">Contrato #{{ contrato.numero }}</span>
+          Valor: {{ formatBRL(contrato.valorTotal ?? contrato.valor) }}
+        </div>
+      </div>
+
+      @if (contrato.tituloDocumento) {
+        <h3 style="text-align:center; margin:16px 0">{{ contrato.tituloDocumento }}</h3>
+      }
+      @for (p of paragrafos(contrato.cabecalho); track $index) {
+        <p style="text-align:justify">{{ p }}</p>
+      }
+
+      <div class="doc-section no-print" style="display:flex; justify-content:space-between; align-items:center">
+        <h4 style="margin:0; border:0; padding:0">Cláusulas</h4>
+        @if (!editandoClausulas && (contrato.status === 'rascunho' || contrato.status === 'aguardando')) {
+          <button class="btn btn-secondary" type="button" (click)="iniciarEdicaoClausulas()">✏️ Editar cláusulas</button>
+        }
+      </div>
+
+      @if (!editandoClausulas) {
+        @for (cl of contrato.clausulas; track cl.id) {
+          <div class="doc-clause">
+            <h4>CLÁUSULA {{ cl.numero }}ª – {{ cl.titulo }}</h4>
+            @for (p of paragrafos(cl.texto); track $index) {
+              <p style="text-align:justify">{{ p }}</p>
+            }
+            @if (cl.baseLegal) { <p class="small" style="opacity:.7"><em>Base legal: {{ cl.baseLegal }}</em></p> }
+          </div>
+        }
+      } @else {
+        <div class="no-print">
+          @for (cl of clausulasEdicao; track cl.id; let i = $index) {
+            <div class="field">
+              <label>Cláusula {{ cl.numero }}ª – {{ cl.titulo }}</label>
+              <textarea class="textarea" rows="6" [(ngModel)]="clausulasEdicao[i].texto" [ngModelOptions]="{ standalone: true }"></textarea>
+            </div>
+          }
+          <div class="row-actions mt-8">
+            <button class="btn btn-secondary" type="button" (click)="cancelarEdicaoClausulas()">Cancelar</button>
+            <button class="btn btn-primary" type="button" [disabled]="salvandoClausulas" (click)="salvarClausulas()">{{ salvandoClausulas ? 'Salvando...' : 'Salvar cláusulas' }}</button>
+          </div>
+        </div>
+      }
+
+      @if (contrato.aditivos.length) {
+        <div class="doc-section">
+          <h4>Aditivos contratuais</h4>
+          @for (a of contrato.aditivos; track a.id) {
+            <div class="doc-clause">
+              <h4>Aditivo #{{ a.numero }} — {{ a.tipo }} <span class="no-print"><button class="row-action" type="button" (click)="removerAditivo(a)">🗑️</button></span></h4>
+              <p>{{ a.descricao }}</p>
+              @if (a.valor) { <p>Valor: {{ formatBRL(a.valor) }}</p> }
+              @if (a.condicoes) { <p>{{ a.condicoes }}</p> }
+              <p class="small">{{ formatDate(a.data) }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (contrato.assinatura) {
+        <p style="margin-top:24px">{{ contrato.assinatura }}</p>
+      }
+      <div class="doc-signature">
+        <div class="line">CONTRATANTE<br>{{ valores['contratante.nome'] || contrato.clienteNome }}</div>
+        <div class="line">CONTRATADO</div>
+      </div>
+      <div class="doc-signature">
+        <div class="line">Testemunha 1<br>Nome / CPF</div>
+        <div class="line">Testemunha 2<br>Nome / CPF</div>
+      </div>
+      @if (contrato.avisoLegal) {
+        <p class="doc-footer-note">{{ contrato.avisoLegal }} (modelos v{{ contrato.versaoModelos }})</p>
+      }
+    </div>
+
+    <div class="card mt-24 no-print">
+      <div class="card-head"><div><h3>Aditivos</h3><p class="sub">Alterações de valor, prazo ou condições feitas após a assinatura</p></div>
+        <button class="btn btn-secondary" type="button" (click)="abrirModalAditivo()">+ Novo aditivo</button>
+      </div>
+    </div>
+  } @else if (!carregando) {
+    <div class="empty mt-24"><span class="empty-icon">📄</span><h4>Contrato não encontrado</h4></div>
+  }
+</main>
+
+@if (modalAditivoAberto) {
+  <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <div><h3>Novo aditivo</h3><p class="sub">Registra uma alteração contratual.</p></div>
+        <button class="modal-close" type="button" (click)="modalAditivoAberto = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formAditivo" (ngSubmit)="adicionarAditivo()" novalidate>
+          <div class="field">
+            <label>Tipo</label>
+            <select class="select" formControlName="tipo">
+              <option value="valor">Valor</option>
+              <option value="prazo">Prazo</option>
+              <option value="escopo">Escopo</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Descrição <span class="req">*</span></label>
+            <textarea class="textarea" formControlName="descricao" placeholder="Descreva a alteração..."></textarea>
+          </div>
+          <div class="field">
+            <label>Valor adicional (R$)</label>
+            <input class="input" type="number" step="0.01" formControlName="valor">
+          </div>
+          <div class="field">
+            <label>Condições</label>
+            <input class="input" formControlName="condicoes" placeholder="Ex.: nova data de entrega...">
+          </div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" type="button" (click)="modalAditivoAberto = false">Cancelar</button>
+        <button class="btn btn-primary" type="button" [disabled]="salvandoAditivo" (click)="adicionarAditivo()">{{ salvandoAditivo ? 'Salvando...' : 'Adicionar aditivo' }}</button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,149 @@
+<app-header subtitulo="Veja o resumo do seu negócio."></app-header>
+
+<main class="page">
+
+  @if (erro) {
+    <div class="alert alert-danger mb-24">
+      <span class="alert-icon">⛔</span>
+      <div><strong>Backend indisponível</strong><p>{{ erro }}</p></div>
+    </div>
+  }
+
+  @if (resumo) {
+    <section class="grid grid-4 mb-24">
+      <article class="kpi is-revenue">
+        <div class="kpi-label">Faturamento do mês</div>
+        <div class="kpi-value">{{ formatBRL(resumo.faturamento) }}</div>
+      </article>
+      <article class="kpi is-cost">
+        <div class="kpi-label">Custos</div>
+        <div class="kpi-value">{{ formatBRL(resumo.custos) }}</div>
+        <div class="kpi-foot">{{ formatPercent((resumo.custos / (resumo.faturamento || 1)) * 100) }} do que você faturou</div>
+      </article>
+      <article class="kpi is-profit">
+        <div class="kpi-label">Lucro</div>
+        <div class="kpi-value">{{ formatBRL(resumo.lucro) }}</div>
+      </article>
+      <article class="kpi is-count">
+        <div class="kpi-label">Serviços em andamento</div>
+        <div class="kpi-value">{{ resumo.emAndamento < 10 ? '0' + resumo.emAndamento : resumo.emAndamento }}</div>
+        <div class="kpi-foot">{{ formatBRL(resumo.aReceber) }} ainda a receber</div>
+      </article>
+    </section>
+  }
+
+  <div class="grid grid-main">
+    <div class="grid" style="align-content:start">
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h3>Faturamento, custos e lucro</h3>
+            <p class="sub">Últimos 6 meses</p>
+          </div>
+          @if (resumo) {
+            <span class="badge badge-brand badge-plain">Margem do mês: {{ formatPercent(resumo.margem) }}</span>
+          }
+        </div>
+        <div class="card-body">
+          <app-grafico [dados]="historico"></app-grafico>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h3>Serviços recentes</h3>
+            <p class="sub">Valor, custo e lucro de cada trabalho</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          @if (servicosRecentes.length) {
+            <table class="table">
+              <thead>
+                <tr><th>Serviço</th><th>Data</th><th class="num">Valor</th><th class="num">Custo</th><th class="num">Lucro</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                @for (s of servicosRecentes; track s.id) {
+                  <tr>
+                    <td>
+                      <div class="cell-person">
+                        <span class="avatar">{{ iniciais(s.clienteNome) }}</span>
+                        <div><strong>{{ s.titulo }}</strong><span>{{ s.clienteNome }} · <span class="mono">#{{ s.numero }}</span></span></div>
+                      </div>
+                    </td>
+                    <td class="small">{{ formatDate(s.data) }}</td>
+                    <td class="num">{{ formatBRL(s.valor) }}</td>
+                    <td class="num">{{ formatBRL(s.custoReal) }}</td>
+                    <td class="num" [class.pos]="(s.valor - s.custoReal) >= 0" [class.neg]="(s.valor - s.custoReal) < 0">{{ formatBRL(s.valor - s.custoReal) }}</td>
+                    <td><span class="badge" [ngClass]="statusMap[s.status]?.classe">{{ statusMap[s.status]?.label || s.status }}</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else if (!carregando) {
+            <div class="empty"><span class="empty-icon">🔨</span><h4>Você ainda não possui serviços</h4><p>Crie um orçamento para começar a acompanhar seus trabalhos.</p></div>
+          }
+        </div>
+      </section>
+    </div>
+
+    <div class="grid" style="align-content:start">
+      <section class="card dash-alerts">
+        <div class="card-head">
+          <div>
+            <h3>Precisa da sua atenção</h3>
+            <p class="sub">{{ alertas.length ? alertas.length + ' item(ns) pendente(s)' : 'Nada pendente por enquanto' }}</p>
+          </div>
+        </div>
+        <div class="card-body">
+          @if (alertas.length) {
+            @for (a of alertas; track a.titulo) {
+              <div class="alert" [ngClass]="'alert-' + a.tipo">
+                <span class="alert-icon">{{ a.icone }}</span>
+                <div><strong>{{ a.titulo }}</strong><p>{{ a.texto }}</p></div>
+              </div>
+            }
+          } @else {
+            <div class="empty"><span class="empty-icon">✅</span><h4>Tudo em dia</h4><p>Nenhum orçamento parado ou custo fora do previsto.</p></div>
+          }
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><div><h3>Próximos serviços</h3><p class="sub">Com o lucro estimado de cada um</p></div></div>
+        <div>
+          @if (proximosServicos.length) {
+            @for (s of proximosServicos; track s.id) {
+              <div class="agenda-item">
+                <span class="hour">{{ s.hora }}</span>
+                <div class="info"><strong>{{ s.titulo }}</strong><span>{{ s.clienteNome }}</span></div>
+                <div class="valores">
+                  <div class="v">{{ formatBRL(s.valor) }}</div>
+                  <div class="muted">lucro {{ formatBRL(lucroEstimado(s)) }}</div>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="empty"><span class="empty-icon">📅</span><h4>Nenhum serviço agendado</h4><p>Quando um orçamento for aprovado, o serviço aparece aqui.</p></div>
+          }
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h3>Atalhos</h3></div>
+        <div class="card-body">
+          <div class="quick-actions">
+            <a class="quick-action" routerLink="/app/orcamentos/novo">
+              <span class="qa-icon">📑</span>
+              <span>Criar orçamento<span class="qa-sub">Com os campos do seu nicho</span></span>
+            </a>
+            <a class="quick-action" routerLink="/app/clientes" [queryParams]="{ novo: 1 }">
+              <span class="qa-icon">👥</span>
+              <span>Cadastrar cliente<span class="qa-sub">Histórico completo em um lugar</span></span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>

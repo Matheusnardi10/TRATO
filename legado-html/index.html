@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trato — Do orçamento ao lucro, tudo em um só lugar</title>
+  <meta name="description" content="Plataforma de gestão para profissionais autônomos: orçamentos, contratos por nicho, agenda, controle de custos e lucro real de cada serviço.">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body class="lp">
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="lp-nav">
+    <div class="lp-nav-inner">
+      <a class="lp-logo" href="index.html" id="marca-nav">Trato</a>
+      <nav class="lp-menu" aria-label="Navegação principal">
+        <a href="#funcionalidades">Funcionalidades</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#para-quem">Para quem é</a>
+      </nav>
+      <div class="lp-nav-actions">
+        <a class="btn btn-ghost" href="pages/login.html">Entrar</a>
+        <a class="btn btn-primary" href="pages/cadastro.html">Criar conta</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div>
+      <span class="eyebrow">Gestão para quem trabalha por conta própria</span>
+      <h1>Do orçamento ao <em>lucro</em>, tudo em um só lugar.</h1>
+      <p class="lead">
+        Organize seus serviços, formalize seus contratos, controle seus custos e
+        descubra quanto realmente ganha em cada trabalho.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="pages/cadastro.html">Começar agora</a>
+        <a class="btn btn-secondary btn-lg" href="#solucao">Conhecer a plataforma</a>
+      </div>
+      <p class="hero-note">Sem cartão de crédito. Você pode testar com dados de exemplo.</p>
+    </div>
+
+    <!-- Cartão do serviço: o número que ninguém calcula -->
+    <div class="work-card">
+      <div class="work-card-head">
+        <div>
+          <strong>Instalação elétrica</strong>
+          <div class="tiny muted">Cliente: João Silva</div>
+        </div>
+        <span class="doc">SERVIÇO #034</span>
+      </div>
+      <div class="work-card-body">
+        <div class="work-line"><span class="lbl">Valor contratado</span><span class="val">R$ 1.500,00</span></div>
+        <div class="work-line"><span class="lbl">Material</span><span class="val">− R$ 350,00</span></div>
+        <div class="work-line"><span class="lbl">Combustível e pedágio</span><span class="val">− R$ 80,00</span></div>
+        <div class="work-line"><span class="lbl">Ajudante (diária)</span><span class="val">− R$ 250,00</span></div>
+        <div class="work-total">
+          <span>Lucro real deste serviço</span>
+          <strong>R$ 820,00</strong>
+        </div>
+        <div class="work-hour">
+          <span>16 horas trabalhadas</span>
+          <span>Lucro por hora: <b>R$ 51,25</b></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROBLEMA ================= -->
+  <div class="section-alt-wrap">
+    <section class="section">
+      <div class="section-head">
+        <p class="kicker">O problema</p>
+        <h2>O serviço começa antes do combinado ficar claro.</h2>
+        <p>A negociação acontece por mensagem, o trabalho é fechado no “fechado!” e os detalhes ficam de fora.</p>
+      </div>
+
+      <div class="problem-grid">
+        <div>
+          <div class="chat">
+            <div class="chat-head">Conversa de quinta-feira, 14:32</div>
+            <div class="bubble them">Boa tarde! Consegue fazer a instalação lá em casa?<time>14:32</time></div>
+            <div class="bubble me">Consigo sim. Faço o serviço por R$ 800.<time>14:35</time></div>
+            <div class="bubble them">Fechado 👍<time>14:36</time></div>
+            <div class="chat-after">
+              E aí começa o trabalho sem data confirmada, sem forma de pagamento,
+              sem saber quem compra o material e sem contrato.
+            </div>
+          </div>
+        </div>
+
+        <ul class="problem-list">
+          <li><span class="x">✕</span><div><b>Combinado que ninguém registrou</b>Prazo, horário, materiais e responsabilidades ficam na memória de cada um.</div></li>
+          <li><span class="x">✕</span><div><b>Alterações no meio do caminho</b>O cliente pede algo a mais e o valor nunca é ajustado.</div></li>
+          <li><span class="x">✕</span><div><b>Agenda em três lugares diferentes</b>Bloco de notas, conversa e memória — até o dia em que dois trabalhos caem no mesmo horário.</div></li>
+          <li><span class="x">✕</span><div><b>Gastos que somem</b>Gasolina, marmita, pedágio, ajudante. Cada um parece pequeno até o fim do mês.</div></li>
+          <li><span class="x">✕</span><div><b>Faturamento não é lucro</b>No fim, não dá para responder: “quanto sobrou deste trabalho?”</div></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= SOLUÇÃO ================= -->
+  <section class="section" id="solucao">
+    <div class="section-head center">
+      <p class="kicker">A solução</p>
+      <h2>Um caminho só, do primeiro contato ao dinheiro no bolso.</h2>
+      <p>Cada etapa aproveita os dados da anterior. Você não digita a mesma coisa duas vezes.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <span class="f-n">ETAPA 01</span>
+        <h4>Orçamento</h4>
+        <p>Monte com os campos do seu tipo de serviço e veja o lucro antes de enviar.</p>
+      </div>
+      <div class="flow-step">
+        <span class="f-n">ETAPA 02</span>
+        <h4>Contrato</h4>
+        <p>Aprovado o orçamento, o contrato do seu nicho é preenchido sozinho.</p>
+      </div>
+      <div class="flow-step">
+        <span class="f-n">ETAPA 03</span>
+        <h4>Agenda</h4>
+        <p>O serviço entra no calendário e o sistema avisa se houver conflito.</p>
+      </div>
+      <div class="flow-step">
+        <span class="f-n">ETAPA 04</span>
+        <h4>Execução</h4>
+        <p>Acompanhe o andamento e registre as horas realmente trabalhadas.</p>
+      </div>
+      <div class="flow-step">
+        <span class="f-n">ETAPA 05</span>
+        <h4>Custos</h4>
+        <p>Material, combustível, ajudante e alimentação lançados na hora.</p>
+      </div>
+      <div class="flow-step">
+        <span class="f-n">ETAPA 06</span>
+        <h4>Lucro</h4>
+        <p>O resultado real de cada trabalho, e o lucro por hora do seu tempo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DIFERENCIAIS ================= -->
+  <div class="section-alt-wrap">
+    <section class="section" id="funcionalidades">
+      <div class="section-head">
+        <p class="kicker">Diferenciais</p>
+        <h2>Feito para o seu tipo de trabalho, não para “empresas em geral”.</h2>
+      </div>
+
+      <div class="feat-grid">
+        <article class="feat">
+          <div class="f-icon">📄</div>
+          <h3>Contratos por nicho</h3>
+          <p>Fotógrafo trata de direitos de imagem; eletricista trata de garantia e materiais. Cada nicho tem seu modelo, pronto para personalizar.</p>
+        </article>
+        <article class="feat">
+          <div class="f-icon">📈</div>
+          <h3>Rentabilidade por serviço</h3>
+          <p>Custo previsto x custo real, lucro, margem e lucro por hora — atualizados a cada despesa lançada.</p>
+        </article>
+        <article class="feat">
+          <div class="f-icon">📅</div>
+          <h3>Agenda financeira</h3>
+          <p>A agenda mostra o que você vai fazer e quanto aquele dia deve deixar de lucro.</p>
+        </article>
+        <article class="feat">
+          <div class="f-icon">➕</div>
+          <h3>Controle de aditivos</h3>
+          <p>Pediu um álbum a mais? Registre o aditivo e o valor do contrato se ajusta sozinho.</p>
+        </article>
+        <article class="feat">
+          <div class="f-icon">🗂️</div>
+          <h3>Histórico completo</h3>
+          <p>Todo cliente guarda orçamentos, contratos, serviços e pagamentos no mesmo lugar.</p>
+        </article>
+        <article class="feat soon">
+          <div class="f-icon">💬</div>
+          <h3>Despesas pelo WhatsApp <span class="badge badge-info">em breve</span></h3>
+          <p>Registro de despesas pelo WhatsApp em breve: mande “paguei 80 de gasolina” e o gasto entra no serviço certo.</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= PARA QUEM É ================= -->
+  <section class="section" id="para-quem">
+    <div class="section-head">
+      <p class="kicker">Para quem é</p>
+      <h2>Se o trabalho sai do seu par de mãos, o Trato serve para você.</h2>
+    </div>
+
+    <div class="who-grid">
+      <div class="who"><span class="w-emoji">📸</span><strong>Fotógrafos</strong><span>Ensaios, eventos e coberturas</span></div>
+      <div class="who"><span class="w-emoji">🔌</span><strong>Eletricistas</strong><span>Instalações e reparos</span></div>
+      <div class="who"><span class="w-emoji">❄️</span><strong>Técnicos de ar</strong><span>Instalação e manutenção</span></div>
+      <div class="who"><span class="w-emoji">🎨</span><strong>Pintores</strong><span>Residencial e comercial</span></div>
+      <div class="who"><span class="w-emoji">🧱</span><strong>Pedreiros</strong><span>Obras e reformas</span></div>
+      <div class="who"><span class="w-emoji">🪚</span><strong>Marceneiros</strong><span>Móveis sob medida</span></div>
+      <div class="who"><span class="w-emoji">🔧</span><strong>Assistências</strong><span>Manutenção e instalação</span></div>
+      <div class="who"><span class="w-emoji">💻</span><strong>Freelancers</strong><span>Projetos e eventos</span></div>
+    </div>
+  </section>
+
+  <!-- ================= COMO FUNCIONA ================= -->
+  <div class="section-alt-wrap">
+    <section class="section" id="como-funciona">
+      <div class="section-head">
+        <p class="kicker">Como funciona</p>
+        <h2>Seis passos, na ordem em que o trabalho acontece.</h2>
+      </div>
+
+      <div class="how">
+        <div class="how-item">
+          <span class="h-n">01</span>
+          <div><h4>Escolha seu tipo de serviço</h4><p>No cadastro você diz o que faz. É isso que define seus campos de orçamento e seu modelo de contrato.</p></div>
+        </div>
+        <div class="how-item">
+          <span class="h-n">02</span>
+          <div><h4>Cadastre o cliente e monte o orçamento</h4><p>Informe os custos e a margem desejada. O valor final e o lucro estimado aparecem na hora.</p></div>
+        </div>
+        <div class="how-item">
+          <span class="h-n">03</span>
+          <div><h4>Envie e receba a resposta</h4><p>O cliente abre um link, lê as condições e aprova ou recusa. Você acompanha o status.</p></div>
+        </div>
+        <div class="how-item">
+          <span class="h-n">04</span>
+          <div><h4>Gere o contrato em um clique</h4><p>O modelo do seu nicho vem preenchido com os dados do orçamento. Revise e envie.</p></div>
+        </div>
+        <div class="how-item">
+          <span class="h-n">05</span>
+          <div><h4>Agende e execute</h4><p>O serviço entra na agenda com valor e lucro estimado. Lance as despesas conforme o trabalho anda.</p></div>
+        </div>
+        <div class="how-item">
+          <span class="h-n">06</span>
+          <div><h4>Receba e confira o resultado</h4><p>Registre o pagamento e veja o lucro real, a margem e o lucro por hora nos relatórios.</p></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= CTA FINAL ================= -->
+  <section class="section">
+    <div class="cta">
+      <h2>Comece a organizar seus serviços.</h2>
+      <p>Crie sua conta, escolha seu tipo de serviço e monte seu primeiro orçamento em poucos minutos.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="pages/cadastro.html">Criar minha conta</a>
+        <a class="btn btn-secondary btn-lg" href="pages/login.html">Já tenho conta</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="lp-footer">
+    <div class="lp-footer-inner">
+      <div>
+        <a class="lp-logo" href="index.html">Trato</a>
+        <p class="about">Do orçamento ao lucro, tudo em um só lugar. Plataforma de gestão para profissionais autônomos e pequenos prestadores de serviços.</p>
+      </div>
+      <div>
+        <h5>Produto</h5>
+        <ul>
+          <li><a href="#funcionalidades">Funcionalidades</a></li>
+          <li><a href="#como-funciona">Como funciona</a></li>
+          <li><a href="#para-quem">Para quem é</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Conta</h5>
+        <ul>
+          <li><a href="pages/login.html">Entrar</a></li>
+          <li><a href="pages/cadastro.html">Criar conta</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Sobre</h5>
+        <ul>
+          <li><a href="#solucao">A plataforma</a></li>
+          <li><a href="#" id="link-aviso">Aviso sobre contratos</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="lp-footer-bottom">
+      <span>© <span id="ano"></span> Trato — projeto acadêmico, nome provisório.</span>
+      <span>Os modelos de contrato são personalizáveis e não substituem orientação jurídica.</span>
+    </div>
+  </footer>
+
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/landing.js"></script>
+</body>
+</html>

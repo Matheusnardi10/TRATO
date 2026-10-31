@@ -1,0 +1,28 @@
+
+# Angular / Node
+node_modules/
+.angular/
+dist/
+coverage/
+
+# Java / Maven
+target/
+*.class
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Variáveis de ambiente e credenciais
+.env
+.env.*
+!.env.example

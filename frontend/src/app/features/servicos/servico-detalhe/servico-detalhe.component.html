@@ -1,0 +1,166 @@
+<app-header titulo="Detalhe do serviço" subtitulo="Custos reais, lucro e pagamento."></app-header>
+
+<main class="page">
+  <a routerLink="/app/servicos" class="small">&larr; Voltar para serviços</a>
+
+  @if (erro) {
+    <div class="alert alert-danger mt-16"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  @if (servico) {
+    <div class="page-head mt-16">
+      <div>
+        <h2>{{ servico.titulo }} <span class="mono small">#{{ servico.numero }}</span></h2>
+        <p class="sub">{{ servico.clienteNome }} · {{ formatDate(servico.data) }} às {{ servico.hora }}</p>
+      </div>
+      <div class="row-actions">
+        <span class="badge" [ngClass]="statusMap[servico.status]?.classe">{{ statusMap[servico.status]?.label }}</span>
+        @if (servico.status !== 'concluido' && servico.status !== 'cancelado') {
+          @if (servico.status === 'agendado') {
+            <button class="btn btn-secondary" type="button" (click)="alterarStatus('em_andamento')">Iniciar</button>
+          }
+          @if (servico.status === 'em_andamento') {
+            <button class="btn btn-secondary" type="button" (click)="alterarStatus('pausado')">Pausar</button>
+          }
+          @if (servico.status === 'pausado') {
+            <button class="btn btn-secondary" type="button" (click)="alterarStatus('em_andamento')">Retomar</button>
+          }
+          <button class="btn btn-primary" type="button" (click)="alterarStatus('concluido')">Concluir serviço</button>
+          <button class="btn btn-ghost" type="button" (click)="alterarStatus('cancelado')">Cancelar</button>
+        }
+        <button class="btn btn-ghost" type="button" (click)="excluir()">🗑️</button>
+      </div>
+    </div>
+
+    <section class="grid grid-4 mb-24">
+      <article class="kpi is-revenue"><div class="kpi-label">Valor do serviço</div><div class="kpi-value">{{ formatBRL(servico.valor) }}</div></article>
+      <article class="kpi is-cost">
+        <div class="kpi-label">Custo previsto × real</div>
+        <div class="kpi-value">{{ formatBRL(custoTotalReal) }}</div>
+        <div class="kpi-foot">previsto {{ formatBRL(custoTotalPrevisto) }} · diferença <span [class.pos]="diferencaCusto <= 0" [class.neg]="diferencaCusto > 0">{{ formatBRL(diferencaCusto) }}</span></div>
+      </article>
+      <article class="kpi is-profit">
+        <div class="kpi-label">Lucro previsto × realizado</div>
+        <div class="kpi-value">{{ formatBRL(lucroRealizado) }}</div>
+        <div class="kpi-foot">previsto {{ formatBRL(lucroPrevisto) }}</div>
+      </article>
+      <article class="kpi is-count"><div class="kpi-label">Margem realizada</div><div class="kpi-value">{{ formatPercent(margemRealizada) }}</div></article>
+    </section>
+
+    <div class="grid grid-main">
+      <section class="card">
+        <div class="card-head">
+          <div><h3>Custos reais</h3><p class="sub">Cada categoria soma automaticamente ao custo real do serviço</p></div>
+          <button class="btn btn-primary" type="button" (click)="abrirModalCusto()">+ Registrar custo</button>
+        </div>
+        <div class="table-wrap">
+          @if (despesas.length) {
+            <table class="table">
+              <thead><tr><th>Categoria</th><th>Descrição</th><th>Data</th><th class="num">Valor</th></tr></thead>
+              <tbody>
+                @for (d of despesas; track d.id) {
+                  <tr>
+                    <td>{{ categoriaInfo(d.categoria)?.emoji }} {{ categoriaInfo(d.categoria)?.nome || d.categoria }}</td>
+                    <td>{{ d.descricao }}</td>
+                    <td class="small">{{ formatDate(d.data) }}</td>
+                    <td class="num">{{ formatBRL(d.valor) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <div class="empty"><span class="empty-icon">🧾</span><h4>Nenhum custo registrado</h4><p>Registre material, combustível, mão de obra e outros gastos reais deste serviço.</p></div>
+          }
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div><h3>Pagamento</h3><p class="sub">Status recalculado sempre pelo backend</p></div>
+          @if (pagamento) {
+            <span class="badge" [ngClass]="statusPagamentoMap[pagamento.status]?.classe">{{ statusPagamentoMap[pagamento.status]?.label }}</span>
+          }
+        </div>
+        <div class="card-body">
+          @if (pagamento) {
+            <p class="small">Total: <strong>{{ formatBRL(pagamento.valorTotal) }}</strong></p>
+            <p class="small">Recebido: <strong>{{ formatBRL(pagamento.valorRecebido) }}</strong></p>
+            <p class="small">A receber: <strong>{{ formatBRL(pagamento.valorTotal - pagamento.valorRecebido) }}</strong></p>
+            @if (pagamento.status !== 'pago') {
+              <button class="btn btn-primary mt-8" type="button" (click)="abrirModalRecebimento()">Registrar recebimento</button>
+            }
+          } @else {
+            <div class="empty"><span class="empty-icon">💳</span><h4>Sem pagamento vinculado</h4></div>
+          }
+        </div>
+      </section>
+    </div>
+  } @else if (!carregando) {
+    <div class="empty mt-24"><span class="empty-icon">🔨</span><h4>Serviço não encontrado</h4></div>
+  }
+</main>
+
+@if (modalCustoAberto) {
+  <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <div><h3>Registrar custo real</h3><p class="sub">Atualiza automaticamente o custo real e o lucro realizado.</p></div>
+        <button class="modal-close" type="button" (click)="modalCustoAberto = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formCusto" (ngSubmit)="registrarCusto()" novalidate>
+          <div class="field">
+            <label>Categoria <span class="req">*</span></label>
+            <select class="select" formControlName="categoria">
+              @for (c of categorias; track c.id) { <option [value]="c.id">{{ c.emoji }} {{ c.nome }}</option> }
+            </select>
+          </div>
+          <div class="field">
+            <label>Descrição <span class="req">*</span></label>
+            <input class="input" formControlName="descricao" placeholder="Ex.: Gasolina para deslocamento">
+          </div>
+          <div class="field">
+            <label>Valor (R$) <span class="req">*</span></label>
+            <input class="input" type="number" step="0.01" formControlName="valor">
+          </div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" type="button" (click)="modalCustoAberto = false">Cancelar</button>
+        <button class="btn btn-primary" type="button" [disabled]="salvandoCusto" (click)="registrarCusto()">{{ salvandoCusto ? 'Salvando...' : 'Registrar custo' }}</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (modalRecebimentoAberto) {
+  <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <div><h3>Registrar recebimento</h3><p class="sub">Atualiza o status do pagamento automaticamente.</p></div>
+        <button class="modal-close" type="button" (click)="modalRecebimentoAberto = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formRecebimento" (ngSubmit)="registrarRecebimento()" novalidate>
+          <div class="field">
+            <label>Valor recebido (R$) <span class="req">*</span></label>
+            <input class="input" type="number" step="0.01" formControlName="valor">
+          </div>
+          <div class="field">
+            <label>Forma de pagamento</label>
+            <select class="select" formControlName="forma">
+              <option value="pix">Pix</option>
+              <option value="dinheiro">Dinheiro</option>
+              <option value="cartao">Cartão</option>
+              <option value="transferencia">Transferência</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" type="button" (click)="modalRecebimentoAberto = false">Cancelar</button>
+        <button class="btn btn-primary" type="button" [disabled]="salvandoRecebimento" (click)="registrarRecebimento()">{{ salvandoRecebimento ? 'Salvando...' : 'Registrar' }}</button>
+      </div>
+    </div>
+  </div>
+}

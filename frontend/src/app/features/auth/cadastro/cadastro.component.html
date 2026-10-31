@@ -1,0 +1,65 @@
+<div class="auth">
+  <aside class="auth-aside">
+    <a class="aside-logo">Trato</a>
+    <div>
+      <h2>Comece a organizar<br>seu negócio hoje.</h2>
+      <p>Leva menos de um minuto para criar sua conta.</p>
+    </div>
+  </aside>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <h1>Criar conta</h1>
+      <p class="sub">Preencha seus dados para começar.</p>
+
+      <div class="card card-padded">
+        <form [formGroup]="form" (ngSubmit)="cadastrar()" novalidate>
+          <div class="field">
+            <label for="nome">Nome completo <span class="req">*</span></label>
+            <input class="input" id="nome" formControlName="nome" placeholder="Seu nome">
+            @if (form.get('nome')?.invalid && form.get('nome')?.touched) {
+              <span class="field-error">Campo obrigatório.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="nomeProfissional">Nome do negócio</label>
+            <input class="input" id="nomeProfissional" formControlName="nomeProfissional" placeholder="Ex.: Ateliê da Ana">
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="email">E-mail <span class="req">*</span></label>
+              <input class="input" type="email" id="email" formControlName="email" placeholder="voce@email.com">
+              @if (form.get('email')?.invalid && form.get('email')?.touched) {
+                <span class="field-error">Informe um e-mail válido.</span>
+              }
+            </div>
+            <div class="field">
+              <label for="telefone">Telefone</label>
+              <input class="input" id="telefone" formControlName="telefone" placeholder="(11) 90000-0000">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="senha">Senha <span class="req">*</span></label>
+            <input class="input" type="password" id="senha" formControlName="senha" placeholder="Mínimo de 6 caracteres">
+            @if (form.get('senha')?.invalid && form.get('senha')?.touched) {
+              <span class="field-error">Mínimo de 6 caracteres.</span>
+            }
+          </div>
+
+          @if (erro) {
+            <div class="alert alert-danger mb-16"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+          }
+
+          <button class="btn btn-primary btn-block btn-lg" type="submit" [disabled]="enviando">
+            {{ enviando ? 'Criando conta...' : 'Criar conta' }}
+          </button>
+        </form>
+      </div>
+
+      <p class="auth-foot">Já possui conta? <a routerLink="/login">Entrar</a></p>
+    </div>
+  </main>
+</div>

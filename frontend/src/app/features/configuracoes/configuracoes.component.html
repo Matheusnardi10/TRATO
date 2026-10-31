@@ -1,0 +1,108 @@
+<app-header titulo="Configurações" subtitulo="Perfil, negócio e segurança da conta."></app-header>
+
+<main class="page">
+  <div class="tabs">
+    <button class="tab" [class.active]="aba === 'perfil'" type="button" (click)="aba = 'perfil'">Perfil</button>
+    <button class="tab" [class.active]="aba === 'negocio'" type="button" (click)="aba = 'negocio'">Negócio</button>
+    <button class="tab" [class.active]="aba === 'senha'" type="button" (click)="aba = 'senha'">Senha</button>
+  </div>
+
+  @if (aba === 'perfil') {
+    <section class="card mb-24">
+      <div class="card-head"><div><h3>Nicho</h3><p class="sub">Define os campos usados nos seus orçamentos e contratos</p></div></div>
+      <div class="card-body">
+        <div class="field-row">
+          <div class="field">
+            <select class="select" [(ngModel)]="nichoSelecionado" [ngModelOptions]="{ standalone: true }">
+              @for (n of nichos; track n.id) { <option [value]="n.id">{{ n.emoji }} {{ n.nome }}</option> }
+            </select>
+          </div>
+          <div class="field" style="align-self:flex-end">
+            <button class="btn btn-secondary" type="button" [disabled]="salvandoNicho" (click)="salvarNicho()">{{ salvandoNicho ? 'Salvando...' : 'Salvar nicho' }}</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h3>Dados pessoais</h3></div>
+      <div class="card-body">
+        <form [formGroup]="formPerfil" (ngSubmit)="salvarPerfil()" novalidate>
+          <div class="field">
+            <label>Nome <span class="req">*</span></label>
+            <input class="input" formControlName="nome">
+          </div>
+          <div class="field">
+            <label>Nome profissional</label>
+            <input class="input" formControlName="nomeProfissional">
+          </div>
+          <div class="field">
+            <label>Telefone</label>
+            <input class="input" formControlName="telefone">
+          </div>
+          <div class="field">
+            <label>E-mail</label>
+            <input class="input" [value]="auth.usuarioAtual()?.email" disabled>
+            <span class="small muted">O e-mail de acesso não pode ser alterado aqui.</span>
+          </div>
+          <button class="btn btn-primary" type="submit" [disabled]="salvandoPerfil">{{ salvandoPerfil ? 'Salvando...' : 'Salvar perfil' }}</button>
+        </form>
+      </div>
+    </section>
+  }
+
+  @if (aba === 'negocio') {
+    <section class="card">
+      <div class="card-head"><div><h3>Dados do negócio</h3><p class="sub">Usados nos orçamentos, contratos e recibos</p></div></div>
+      <div class="card-body">
+        <form [formGroup]="formNegocio" (ngSubmit)="salvarNegocio()" novalidate>
+          <div class="field-row">
+            <div class="field"><label>Cidade</label><input class="input" formControlName="cidade"></div>
+            <div class="field"><label>Telefone profissional</label><input class="input" formControlName="telefoneProfissional"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>E-mail profissional</label><input class="input" type="email" formControlName="emailProfissional"></div>
+            <div class="field"><label>Pix</label><input class="input" formControlName="pix"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Forma de pagamento padrão</label><input class="input" formControlName="formaPagamentoPadrao"></div>
+            <div class="field"><label>Prazo padrão</label><input class="input" formControlName="prazoPadrao"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>CPF / CNPJ</label><input class="input" formControlName="documento" placeholder="Usado como CONTRATADO nos contratos"></div>
+            <div class="field"><label>Endereço completo</label><input class="input" formControlName="endereco" placeholder="Rua, número, bairro, cidade/UF, CEP"></div>
+          </div>
+          <button class="btn btn-primary" type="submit" [disabled]="salvandoNegocio">{{ salvandoNegocio ? 'Salvando...' : 'Salvar negócio' }}</button>
+        </form>
+      </div>
+    </section>
+  }
+
+  @if (aba === 'senha') {
+    <section class="card">
+      <div class="card-head"><h3>Alterar senha</h3></div>
+      <div class="card-body">
+        @if (erroSenha) {
+          <div class="alert alert-danger mb-16"><span class="alert-icon">⛔</span><div>{{ erroSenha }}</div></div>
+        }
+        <form [formGroup]="formSenha" (ngSubmit)="salvarSenha()" novalidate>
+          <div class="field">
+            <label>Senha atual <span class="req">*</span></label>
+            <input class="input" type="password" formControlName="senhaAtual">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Nova senha <span class="req">*</span></label>
+              <input class="input" type="password" formControlName="novaSenha">
+            </div>
+            <div class="field">
+              <label>Confirmar nova senha <span class="req">*</span></label>
+              <input class="input" type="password" formControlName="confirmarSenha">
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit" [disabled]="salvandoSenha">{{ salvandoSenha ? 'Salvando...' : 'Alterar senha' }}</button>
+        </form>
+      </div>
+    </section>
+  }
+</main>

@@ -1,0 +1,166 @@
+/* ============================================================
+   TRATO — Estilos específicos de páginas
+   ============================================================ */
+
+/* ---------- Login / Cadastro (coluna escura) ---------- */
+.auth-aside .aside-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+.auth-aside h2 {
+  color: #fff;
+  font-size: 30px;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+.auth-aside p { color: #A9BAB5; font-size: 15px; max-width: 380px; position: relative; z-index: 1; }
+.aside-steps { position: relative; z-index: 1; margin-top: 26px; }
+.aside-steps li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 11px 0;
+  color: #C9D5D1;
+  font-size: 14px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.aside-steps li .s-n {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--brand-300);
+  padding-top: 2px;
+}
+.auth-aside .quote {
+  position: relative;
+  z-index: 1;
+  border-left: 2px solid var(--brand-300);
+  padding-left: 16px;
+  color: #C9D5D1;
+  font-size: 14px;
+}
+.auth-aside .quote span { display: block; margin-top: 8px; font-size: 12px; color: #7E918C; }
+
+.auth-card h1 { font-size: 26px; margin-bottom: 6px; }
+.auth-card .sub { color: var(--ink-3); font-size: 14px; margin-bottom: 26px; }
+.auth-card .card-padded { padding: 26px; }
+.auth-foot { margin-top: 20px; text-align: center; font-size: 13.5px; color: var(--ink-3); }
+.demo-hint {
+  margin-top: 16px;
+  padding: 11px 13px;
+  border-radius: var(--radius-sm);
+  background: var(--info-bg);
+  border: 1px solid #D2D7F5;
+  font-size: 12.5px;
+  color: #303C99;
+}
+.demo-hint b { font-family: var(--font-mono); }
+
+/* ---------- Onboarding: conclusão ---------- */
+.done-box { text-align: center; padding: 20px 0 6px; }
+.done-check {
+  width: 62px; height: 62px;
+  border-radius: 50%;
+  background: var(--success-bg);
+  color: var(--success);
+  font-size: 27px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+}
+.done-box h2 { font-size: 26px; }
+.done-list {
+  text-align: left;
+  margin: 22px 0 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.done-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+}
+.done-list li:last-child { border-bottom: 0; }
+.done-list li .ok { color: var(--success); }
+
+/* ---------- Dashboard ---------- */
+.dash-alerts .card-body { padding: 14px; }
+
+.recent-service .svc-name { font-weight: 600; color: var(--ink); }
+.recent-service .svc-client { font-size: 12px; color: var(--ink-3); }
+
+.quick-actions { display: grid; gap: 8px; }
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-family: var(--font);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+.quick-action:hover { border-color: var(--brand-300); background: var(--brand-50); text-decoration: none; }
+.quick-action .qa-icon {
+  width: 32px; height: 32px;
+  flex: none;
+  border-radius: 8px;
+  background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+}
+.quick-action span.qa-sub { display: block; font-size: 12px; color: var(--ink-3); font-weight: 400; }
+
+.mini-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 13.5px;
+}
+.mini-stat:last-child { border-bottom: 0; }
+.mini-stat .ms-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+  margin-top: 8px;
+}
+.progress > i {
+  display: block;
+  height: 100%;
+  background: var(--brand);
+  border-radius: 999px;
+}
+.progress.over > i { background: var(--danger); }
+
+.whats-card {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  padding: 16px;
+  background: #FBFCFB;
+}
+.whats-card .badge { margin-bottom: 8px; }
+.whats-card p { font-size: 13px; color: var(--ink-2); margin-bottom: 12px; }

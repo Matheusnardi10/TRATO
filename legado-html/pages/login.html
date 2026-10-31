@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar — Trato</title>
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+
+<div class="auth">
+  <!-- Coluna de apresentação -->
+  <aside class="auth-aside">
+    <a class="aside-logo" href="../index.html" id="aside-logo">Trato</a>
+
+    <div>
+      <h2>Do orçamento ao lucro,<br>tudo em um só lugar.</h2>
+      <p>Entre para acompanhar seus serviços, contratos e o resultado real de cada trabalho.</p>
+
+      <ul class="aside-steps">
+        <li><span class="s-n">01</span><span>Orçamento com os campos do seu tipo de serviço</span></li>
+        <li><span class="s-n">02</span><span>Contrato gerado a partir do orçamento aprovado</span></li>
+        <li><span class="s-n">03</span><span>Agenda com valor e lucro estimado por dia</span></li>
+        <li><span class="s-n">04</span><span>Custos lançados e lucro calculado na hora</span></li>
+      </ul>
+    </div>
+
+    <div class="quote">
+      “Faturei bem no mês, mas não sei quanto sobrou.”
+      <span>É exatamente essa pergunta que o Trato responde.</span>
+    </div>
+  </aside>
+
+  <!-- Formulário -->
+  <main class="auth-main">
+    <div class="auth-card">
+      <h1>Entrar na sua conta</h1>
+      <p class="sub">Use seu e-mail e senha para acessar o painel.</p>
+
+      <div class="card card-padded">
+        <form id="form-login" novalidate>
+          <div class="field">
+            <label for="email">E-mail <span class="req">*</span></label>
+            <input class="input" type="email" id="email" name="email" placeholder="voce@email.com" autocomplete="email">
+            <span class="field-error"></span>
+          </div>
+
+          <div class="field">
+            <label for="senha">Senha <span class="req">*</span></label>
+            <div class="input-group">
+              <input class="input" type="password" id="senha" name="senha" placeholder="Sua senha" autocomplete="current-password">
+              <button class="toggle-pass" type="button" data-toggle-pass="senha" aria-label="Mostrar senha">👁</button>
+            </div>
+            <span class="field-error"></span>
+          </div>
+
+          <div class="row-between mb-16">
+            <label class="check">
+              <input type="checkbox" id="lembrar"> Lembrar acesso
+            </label>
+            <button class="btn btn-ghost btn-sm" type="button" id="btn-esqueci">Esqueci minha senha</button>
+          </div>
+
+          <button class="btn btn-primary btn-block btn-lg" type="submit">Entrar</button>
+        </form>
+
+        <div class="demo-hint">
+          <strong>Conta de demonstração:</strong> <b>demo@trato.app</b> · senha <b>123456</b>
+        </div>
+      </div>
+
+      <p class="auth-foot">
+        Não possui conta? <a href="cadastro.html">Criar conta</a>
+      </p>
+    </div>
+  </main>
+</div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/store.js"></script>
+<script src="../js/services.js"></script>
+<script src="../js/components.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/auth.js"></script>
+</body>
+</html>

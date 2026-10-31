@@ -1,0 +1,65 @@
+<app-header titulo="Orçamentos" subtitulo="Acompanhe o status de cada proposta."></app-header>
+
+<main class="page">
+  <div class="page-head">
+    <div>
+      <h2>Orçamentos</h2>
+      <p class="sub">{{ orcamentos.length }} orçamento(s)</p>
+    </div>
+    <a class="btn btn-primary" routerLink="/app/orcamentos/novo">+ Novo orçamento</a>
+  </div>
+
+  @if (erro) {
+    <div class="alert alert-danger mb-24"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  <div class="filters">
+    <button class="chip" [class.active]="statusFiltro === 'todos'" type="button" (click)="filtrar('todos')">Todos</button>
+    <button class="chip" [class.active]="statusFiltro === 'rascunho'" type="button" (click)="filtrar('rascunho')">Rascunho</button>
+    <button class="chip" [class.active]="statusFiltro === 'aguardando'" type="button" (click)="filtrar('aguardando')">Aguardando</button>
+    <button class="chip" [class.active]="statusFiltro === 'aprovado'" type="button" (click)="filtrar('aprovado')">Aprovados</button>
+    <button class="chip" [class.active]="statusFiltro === 'recusado'" type="button" (click)="filtrar('recusado')">Recusados</button>
+  </div>
+
+  <section class="card">
+    <div class="table-wrap">
+      @if (orcamentos.length) {
+        <table class="table">
+          <thead>
+            <tr><th>Título</th><th>Cliente</th><th>Data prevista</th><th class="num">Valor</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            @for (o of orcamentos; track o.id) {
+              <tr>
+                <td><strong>#{{ o.numero }}</strong> {{ o.titulo }}</td>
+                <td>{{ o.clienteNome }}</td>
+                <td class="small">{{ formatDate(o.dataPrevista) }}</td>
+                <td class="num">{{ formatBRL(o.valor) }}</td>
+                <td><span class="badge" [ngClass]="statusMap[o.status]?.classe">{{ statusMap[o.status]?.label || o.status }}</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="row-action" [routerLink]="['/app/orcamentos', o.id]" title="Editar">✏️</a>
+                    @if (o.status === 'aguardando') {
+                      <button class="row-action" type="button" title="Aprovar" (click)="aprovar(o)">✅</button>
+                      <button class="row-action" type="button" title="Recusar" (click)="recusar(o)">⛔</button>
+                    }
+                    @if (o.status === 'aprovado') {
+                      <button class="row-action" type="button" title="Gerar contrato" (click)="gerarContrato(o)">📄</button>
+                    }
+                    <button class="row-action" type="button" title="Excluir" (click)="excluir(o)">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else if (!carregando) {
+        <div class="empty">
+          <span class="empty-icon">📑</span>
+          <h4>Nenhum orçamento encontrado</h4>
+          <p>Crie o primeiro orçamento para começar.</p>
+        </div>
+      }
+    </div>
+  </section>
+</main>

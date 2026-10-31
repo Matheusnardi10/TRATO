@@ -1,0 +1,112 @@
+<app-header titulo="Relatórios" subtitulo="Rentabilidade, clientes e desempenho."></app-header>
+
+<main class="page">
+  @if (erro) {
+    <div class="alert alert-danger mb-24"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  <div class="page-head">
+    <div class="tabs" style="margin-bottom:0; border-bottom:0">
+      <button class="tab" [class.active]="aba === 'rentaveis'" type="button" (click)="aba = 'rentaveis'">Serviços rentáveis</button>
+      <button class="tab" [class.active]="aba === 'clientes'" type="button" (click)="aba = 'clientes'">Clientes</button>
+      <button class="tab" [class.active]="aba === 'orcamentos'" type="button" (click)="aba = 'orcamentos'">Orçamentos por status</button>
+      <button class="tab" [class.active]="aba === 'previsto'" type="button" (click)="aba = 'previsto'">Previsto × realizado</button>
+      <button class="tab" [class.active]="aba === 'hora'" type="button" (click)="aba = 'hora'">Lucro por hora</button>
+    </div>
+    <button class="btn btn-secondary" type="button" (click)="exportar()">⬇️ Exportar CSV</button>
+  </div>
+
+  <section class="card">
+    @if (aba === 'rentaveis') {
+      <div class="table-wrap">
+        @if (rentaveis.length) {
+          <table class="table">
+            <thead><tr><th>Serviço</th><th class="num">Valor</th><th class="num">Custo real</th><th class="num">Lucro</th><th class="num">Margem</th></tr></thead>
+            <tbody>
+              @for (r of rentaveis; track r.numero) {
+                <tr>
+                  <td><strong>{{ r.titulo }}</strong> <span class="mono small">#{{ r.numero }}</span></td>
+                  <td class="num">{{ formatBRL(r.valor) }}</td>
+                  <td class="num">{{ formatBRL(r.custoReal) }}</td>
+                  <td class="num" [class.pos]="r.lucroAtual >= 0" [class.neg]="r.lucroAtual < 0">{{ formatBRL(r.lucroAtual) }}</td>
+                  <td class="num">{{ formatPercent(r.margem) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else if (!carregando) {
+          <div class="empty"><span class="empty-icon">📈</span><h4>Sem dados suficientes ainda</h4></div>
+        }
+      </div>
+    }
+
+    @if (aba === 'clientes') {
+      <div class="table-wrap">
+        @if (clientes.length) {
+          <table class="table">
+            <thead><tr><th>Cliente</th><th class="num">Serviços</th><th class="num">Total movimentado</th></tr></thead>
+            <tbody>
+              @for (c of clientes; track c.nome) {
+                <tr><td>{{ c.nome }}</td><td class="num">{{ c.quantidade }}</td><td class="num">{{ formatBRL(c.total) }}</td></tr>
+              }
+            </tbody>
+          </table>
+        } @else if (!carregando) {
+          <div class="empty"><span class="empty-icon">👥</span><h4>Sem movimentações ainda</h4></div>
+        }
+      </div>
+    }
+
+    @if (aba === 'orcamentos') {
+      <div class="card-body">
+        @for (o of orcamentos; track o.status) {
+          <div class="mini-stat"><span>{{ o.status }}</span><span class="ms-value">{{ o.quantidade }} · {{ formatBRL(o.valor) }}</span></div>
+          <div class="progress"><i [style.width.%]="(o.quantidade / totalOrcamentos) * 100"></i></div>
+        }
+      </div>
+    }
+
+    @if (aba === 'previsto') {
+      <div class="table-wrap">
+        @if (previsto.length) {
+          <table class="table">
+            <thead><tr><th>Serviço</th><th class="num">Previsto</th><th class="num">Real</th><th class="num">Diferença</th></tr></thead>
+            <tbody>
+              @for (p of previsto; track p.numero) {
+                <tr>
+                  <td><strong>{{ p.titulo }}</strong> <span class="mono small">#{{ p.numero }}</span></td>
+                  <td class="num">{{ formatBRL(p.previsto) }}</td>
+                  <td class="num">{{ formatBRL(p.real) }}</td>
+                  <td class="num" [class.pos]="p.diferenca <= 0" [class.neg]="p.diferenca > 0">{{ formatBRL(p.diferenca) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else if (!carregando) {
+          <div class="empty"><span class="empty-icon">⚖️</span><h4>Sem serviços concluídos ainda</h4></div>
+        }
+      </div>
+    }
+
+    @if (aba === 'hora') {
+      <div class="table-wrap">
+        @if (porHora.length) {
+          <table class="table">
+            <thead><tr><th>Serviço</th><th class="num">Horas trabalhadas</th><th class="num">Lucro por hora</th></tr></thead>
+            <tbody>
+              @for (h of porHora; track h.numero) {
+                <tr>
+                  <td><strong>{{ h.titulo }}</strong> <span class="mono small">#{{ h.numero }}</span></td>
+                  <td class="num">{{ h.horas }}h</td>
+                  <td class="num">{{ formatBRL(h.lucroPorHora) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else if (!carregando) {
+          <div class="empty"><span class="empty-icon">⏱️</span><h4>Registre horas trabalhadas nos serviços para ver este relatório</h4></div>
+        }
+      </div>
+    }
+  </section>
+</main>

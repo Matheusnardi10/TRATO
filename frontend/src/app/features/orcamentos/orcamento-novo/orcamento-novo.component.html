@@ -1,0 +1,162 @@
+<app-header [titulo]="idEdicao ? 'Editar orçamento #' + orcamentoExistente?.numero : 'Novo orçamento'" subtitulo="Preencha os dados do serviço e do cliente."></app-header>
+
+<main class="page">
+  @if (erro) {
+    <div class="alert alert-danger mb-24"><span class="alert-icon">⛔</span><div>{{ erro }}</div></div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="salvar(idEdicao ? (orcamentoExistente?.status || 'aguardando') : 'aguardando')">
+    <div class="grid grid-main">
+      <div class="grid" style="align-content:start">
+
+        <section class="card">
+          <div class="card-head"><h3>Dados do orçamento</h3></div>
+          <div class="card-body">
+            <div class="field-row">
+              <div class="field">
+                <label>Cliente <span class="req">*</span></label>
+                <select class="select" formControlName="clienteId">
+                  <option value="">Selecione um cliente...</option>
+                  @for (c of clientes; track c.id) {
+                    <option [value]="c.id">{{ c.nome }}</option>
+                  }
+                </select>
+                @if (form.get('clienteId')?.invalid && form.get('clienteId')?.touched) { <span class="field-error">Selecione um cliente.</span> }
+              </div>
+              <div class="field">
+                <label>Título <span class="req">*</span></label>
+                <input class="input" formControlName="titulo" placeholder="Ex.: Ensaio de casamento">
+                @if (form.get('titulo')?.invalid && form.get('titulo')?.touched) { <span class="field-error">Campo obrigatório.</span> }
+              </div>
+            </div>
+            <div class="field">
+              <label>Descrição</label>
+              <textarea class="textarea" formControlName="descricao"></textarea>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Data prevista <span class="req">*</span></label>
+                <input class="input" type="date" formControlName="dataPrevista">
+                @if (form.get('dataPrevista')?.invalid && form.get('dataPrevista')?.touched) { <span class="field-error">Campo obrigatório.</span> }
+              </div>
+              <div class="field">
+                <label>Prazo estimado</label>
+                <input class="input" formControlName="prazoEstimado" placeholder="Ex.: 10 dias">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Forma de pagamento</label>
+                <input class="input" formControlName="formaPagamento" placeholder="Ex.: 50% entrada e 50% na entrega">
+              </div>
+              <div class="field">
+                <label>Validade do orçamento</label>
+                <input class="input" type="date" formControlName="validade">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" formGroupName="camposNicho">
+          <div class="card-head">
+            <div><h3>{{ nicho.emoji }} Campos de {{ nicho.nome }}</h3><p class="sub">Definidos pelo seu tipo de serviço.</p></div>
+          </div>
+          <div class="card-body">
+            @if (!nicho.camposOrcamento.length) {
+              <p class="small muted mb-0">Este nicho não possui campos específicos.</p>
+            }
+            <div class="field-row wrap-fields" style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
+              @for (campo of nicho.camposOrcamento; track campo.id) {
+                <div class="field">
+                  <label>{{ campo.label }} @if (campo.obrigatorio) { <span class="req">*</span> }</label>
+                  @switch (campo.tipo) {
+                    @case ('select') {
+                      <select class="select" [formControlName]="campo.id">
+                        <option value="">Selecione...</option>
+                        @for (op of campo.opcoes; track op) { <option [value]="op">{{ op }}</option> }
+                      </select>
+                    }
+                    @case ('textarea') {
+                      <textarea class="textarea" [formControlName]="campo.id" style="min-height:64px"></textarea>
+                    }
+                    @case ('number') {
+                      <input class="input" type="number" min="0" [formControlName]="campo.id">
+                    }
+                    @case ('time') {
+                      <input class="input" type="time" [formControlName]="campo.id">
+                    }
+                    @default {
+                      <input class="input" type="text" [formControlName]="campo.id">
+                    }
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+
+        <section class="card" formGroupName="custos">
+          <div class="card-head"><h3>Custos estimados</h3></div>
+          <div class="card-body">
+            <div class="field-row wrap-fields" style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
+              @for (cat of categoriasDespesa; track cat.id) {
+                <div class="field">
+                  <label>{{ cat.emoji }} {{ cat.nome }}</label>
+                  <div class="input-group"><span class="prefix">R$</span>
+                    <input class="input" type="number" min="0" step="0.01" [formControlName]="cat.id">
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><h3>Observações</h3></div>
+          <div class="card-body">
+            <textarea class="textarea" formControlName="observacoes"></textarea>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid" style="align-content:start">
+        <section class="card">
+          <div class="card-head"><h3>Precificação</h3></div>
+          <div class="card-body">
+            <div class="field">
+              <label>Custo total</label>
+              <input class="input" [value]="custoTotal | number:'1.2-2':'pt-BR'" disabled>
+            </div>
+            <div class="field">
+              <label>Margem desejada (%)</label>
+              <input class="input" type="number" min="0" max="99" formControlName="margem">
+            </div>
+            <div class="field">
+              <label>Valor final (R$)</label>
+              <input class="input" type="number" min="0" step="0.01" formControlName="valorFinal">
+            </div>
+            <div class="field">
+              <label>Lucro estimado</label>
+              <input class="input" [value]="lucroEstimado | number:'1.2-2':'pt-BR'" disabled>
+            </div>
+
+            <div class="resumo-orcamento mt-16">
+              <div class="row-between"><span>Custo</span><strong>R$ {{ custoTotal | number:'1.2-2':'pt-BR' }}</strong></div>
+              <div class="row-between"><span>Valor</span><strong>R$ {{ valorFinal | number:'1.2-2':'pt-BR' }}</strong></div>
+              <div class="row-between"><span>Lucro</span><strong class="pos">R$ {{ lucroEstimado | number:'1.2-2':'pt-BR' }}</strong></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-body" style="display:flex; flex-direction:column; gap:10px">
+            <button class="btn btn-primary btn-lg" type="submit" [disabled]="salvando">
+              {{ salvando ? 'Salvando...' : (idEdicao ? 'Salvar alterações' : 'Salvar e enviar ao cliente') }}
+            </button>
+            <button class="btn btn-secondary" type="button" [disabled]="salvando" (click)="salvar('rascunho')">Salvar como rascunho</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </form>
+</main>
